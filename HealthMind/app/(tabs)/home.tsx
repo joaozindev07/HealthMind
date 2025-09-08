@@ -1,28 +1,35 @@
-"use client"
-
-import { useState } from "react"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState, useEffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { getUserData } from "../utils/storage";
+import { useUser } from "@clerk/clerk-expo";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Image,
   StyleSheet,
   SafeAreaView,
   StatusBar,
   Dimensions,
   Platform,
-} from "react-native"
-import { useRouter } from "expo-router"
+} from "react-native";
+import { useRouter } from "expo-router";
+import React from "react";
 
-const { width, height } = Dimensions.get("window")
-const STATUSBAR_HEIGHT = Platform.OS === "android" ? StatusBar.currentHeight ?? 24 : 0
+const { width, height } = Dimensions.get("window");
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? StatusBar.currentHeight ?? 24 : 0;
 
 export default function HomePage() {
-  const router = useRouter()
-  const [selectedMood, setSelectedMood] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [dailyNote, setDailyNote] = useState("")
+  const router = useRouter();
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dailyNote, setDailyNote] = useState("");
+  const { user } = useUser();
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const moods = [
     { emoji: "😊", label: "Feliz", color: "#10B981" },
@@ -30,32 +37,101 @@ export default function HomePage() {
     { emoji: "😔", label: "Triste", color: "#6B7280" },
     { emoji: "😰", label: "Ansioso", color: "#F59E0B" },
     { emoji: "😡", label: "Irritado", color: "#EF4444" },
-  ]
+  ];
 
   const professionals = [
-    { name: "Dra. Ana Silva", specialty: "Ansiedade e Depressão", rating: "4.9", available: true },
-    { name: "Dr. Carlos Lima", specialty: "Terapia Cognitiva", rating: "4.8", available: true },
-    { name: "Dra. Maria Santos", specialty: "Relacionamentos", rating: "4.9", available: false },
-  ]
+    {
+      name: "Dra. Ana Silva",
+      specialty: "Ansiedade e Depressão",
+      rating: "4.9",
+      available: true,
+    },
+    {
+      name: "Dr. Carlos Lima",
+      specialty: "Terapia Cognitiva",
+      rating: "4.8",
+      available: true,
+    },
+    {
+      name: "Dra. Maria Santos",
+      specialty: "Relacionamentos",
+      rating: "4.9",
+      available: false,
+    },
+  ];
 
   const resources = [
-    { title: "Meditação Guiada", type: "Áudio", duration: "10 min", category: "meditation" },
-    { title: "Técnicas de Respiração", type: "Artigo", duration: "5 min", category: "breathing" },
-    { title: "Podcast: Mindfulness", type: "Podcast", duration: "25 min", category: "podcast" },
-    { title: "Exercícios de Gratidão", type: "Vídeo", duration: "8 min", category: "gratitude" },
-  ]
+    {
+      title: "Meditação Guiada",
+      type: "Áudio",
+      duration: "10 min",
+      category: "meditation",
+    },
+    {
+      title: "Técnicas de Respiração",
+      type: "Artigo",
+      duration: "5 min",
+      category: "breathing",
+    },
+    {
+      title: "Podcast: Mindfulness",
+      type: "Podcast",
+      duration: "25 min",
+      category: "podcast",
+    },
+    {
+      title: "Exercícios de Gratidão",
+      type: "Vídeo",
+      duration: "8 min",
+      category: "gratitude",
+    },
+  ];
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadProfileImage = async () => {
+        const savedImage = await AsyncStorage.getItem("profile_image");
+        setProfileImage(savedImage);
+      };
+
+      loadProfileImage();
+    }, [])
+  );
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (!user) return;
+      const savedImage = await getUserData(user.id, "image");
+      if (savedImage) {
+        setProfileImage(savedImage);
+      }
+    };
+    fetchImage();
+  }, [user]);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: height * 0.05 }}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: height * 0.05 }}
+      >
         {/* Hero Section */}
-        <View style={[styles.heroSection, { paddingTop: STATUSBAR_HEIGHT + height * 0.04 }]}>
+        <View
+          style={[
+            styles.heroSection,
+            { paddingTop: STATUSBAR_HEIGHT + height * 0.04 },
+          ]}
+        >
           <View style={styles.headerContainer}>
             <View style={styles.heroContent}>
-              <Text style={styles.heroTitle}>Bem-vindo ao seu{"\n"}espaço de bem-estar</Text>
+              <Text style={styles.heroTitle}>
+                Bem-vindo ao seu{"\n"}espaço de bem-estar
+              </Text>
               <Text style={styles.heroSubtitle}>
-                Conecte-se com profissionais e recursos para cuidar da sua saúde mental
+                Conecte-se com profissionais e recursos para cuidar da sua saúde
+                mental
               </Text>
 
               {/* Search Bar */}
@@ -72,10 +148,20 @@ export default function HomePage() {
                 </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity style={styles.profileButton} onPress={() => router.push("/profile")}>
-              <View style={styles.profileIcon}>
-                <Text style={styles.profileIconText}>👤</Text>
-              </View>
+            <TouchableOpacity
+              style={styles.profileButton}
+              onPress={() => router.push("/profile")}
+            >
+              {profileImage ? (
+                <Image
+                  source={{ uri: profileImage }}
+                  style={styles.profileIcon}
+                />
+              ) : (
+                <View style={styles.profileIcon}>
+                  <Text style={styles.profileIconText}>👤</Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
 
@@ -89,7 +175,9 @@ export default function HomePage() {
 
         {/* Daily Mood Tracker */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Como você está se sentindo hoje?</Text>
+          <Text style={styles.sectionTitle}>
+            Como você está se sentindo hoje?
+          </Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -101,17 +189,28 @@ export default function HomePage() {
                 key={index}
                 style={[
                   styles.moodButton,
-                  selectedMood === mood.label && { ...styles.moodButtonSelected, borderColor: mood.color },
-                  { width: 100, padding: width * 0.03, marginRight: width * 0.03 },
+                  selectedMood === mood.label && {
+                    ...styles.moodButtonSelected,
+                    borderColor: mood.color,
+                  },
+                  {
+                    width: 100,
+                    padding: width * 0.03,
+                    marginRight: width * 0.03,
+                  },
                 ]}
                 onPress={() => setSelectedMood(mood.label)}
               >
-                <Text style={[styles.moodEmoji, { fontSize: width * 0.07 }]}>{mood.emoji}</Text>
-                <Text style={[
-                  styles.moodLabel,
-                  selectedMood === mood.label && { color: mood.color },
-                  { fontSize: width * 0.035 }
-                ]}>
+                <Text style={[styles.moodEmoji, { fontSize: width * 0.07 }]}>
+                  {mood.emoji}
+                </Text>
+                <Text
+                  style={[
+                    styles.moodLabel,
+                    selectedMood === mood.label && { color: mood.color },
+                    { fontSize: width * 0.035 },
+                  ]}
+                >
                   {mood.label}
                 </Text>
               </TouchableOpacity>
@@ -121,7 +220,10 @@ export default function HomePage() {
           {selectedMood && (
             <View style={styles.noteContainer}>
               <TextInput
-                style={[styles.noteInput, { fontSize: width * 0.045, minHeight: height * 0.13 }]}
+                style={[
+                  styles.noteInput,
+                  { fontSize: width * 0.045, minHeight: height * 0.13 },
+                ]}
                 placeholder={`Conte mais sobre como você está se sentindo ${selectedMood.toLowerCase()}...`}
                 placeholderTextColor="#9CA3AF"
                 multiline
@@ -131,7 +233,11 @@ export default function HomePage() {
                 textAlignVertical="top"
               />
               <TouchableOpacity style={styles.saveNoteButton}>
-                <Text style={[styles.saveNoteText, { fontSize: width * 0.045 }]}>Salvar reflexão</Text>
+                <Text
+                  style={[styles.saveNoteText, { fontSize: width * 0.045 }]}
+                >
+                  Salvar reflexão
+                </Text>
               </TouchableOpacity>
             </View>
           )}
@@ -140,31 +246,101 @@ export default function HomePage() {
         {/* Connection to Professionals */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Conecte-se com profissionais</Text>
-          <Text style={styles.sectionSubtitle}>Psicólogos e terapeutas especializados</Text>
+          <Text style={styles.sectionSubtitle}>
+            Psicólogos e terapeutas especializados
+          </Text>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.professionalsScroll}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.professionalsScroll}
+          >
             {professionals.map((prof, index) => (
-              <View key={index} style={[styles.professionalCard, { width: width * 0.5, padding: width * 0.05 }]}>
+              <View
+                key={index}
+                style={[
+                  styles.professionalCard,
+                  { width: width * 0.5, padding: width * 0.05 },
+                ]}
+              >
                 <View style={styles.professionalHeader}>
-                  <View style={[styles.professionalAvatar, { width: width * 0.13, height: width * 0.13, borderRadius: width * 0.065 }]}>
-                    <Text style={[styles.professionalInitial, { fontSize: width * 0.06 }]}>{prof.name.charAt(0)}</Text>
+                  <View
+                    style={[
+                      styles.professionalAvatar,
+                      {
+                        width: width * 0.13,
+                        height: width * 0.13,
+                        borderRadius: width * 0.065,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.professionalInitial,
+                        { fontSize: width * 0.06 },
+                      ]}
+                    >
+                      {prof.name.charAt(0)}
+                    </Text>
                   </View>
-                  <View style={[
-                    styles.statusIndicator,
-                    { width: width * 0.03, height: width * 0.03, borderRadius: width * 0.015 },
-                    { backgroundColor: prof.available ? "#10B981" : "#6B7280" }
-                  ]} />
+                  <View
+                    style={[
+                      styles.statusIndicator,
+                      {
+                        width: width * 0.03,
+                        height: width * 0.03,
+                        borderRadius: width * 0.015,
+                      },
+                      {
+                        backgroundColor: prof.available ? "#10B981" : "#6B7280",
+                      },
+                    ]}
+                  />
                 </View>
-                <Text style={[styles.professionalName, { fontSize: width * 0.045 }]}>{prof.name}</Text>
-                <Text style={[styles.professionalSpecialty, { fontSize: width * 0.035 }]}>{prof.specialty}</Text>
+                <Text
+                  style={[styles.professionalName, { fontSize: width * 0.045 }]}
+                >
+                  {prof.name}
+                </Text>
+                <Text
+                  style={[
+                    styles.professionalSpecialty,
+                    { fontSize: width * 0.035 },
+                  ]}
+                >
+                  {prof.specialty}
+                </Text>
                 <View style={styles.ratingContainer}>
-                  <Text style={[styles.ratingText, { fontSize: width * 0.035 }]}>⭐ {prof.rating}</Text>
-                  <Text style={[styles.availabilityText, { fontSize: width * 0.03, color: prof.available ? "#10B981" : "#6B7280" }]}>
+                  <Text
+                    style={[styles.ratingText, { fontSize: width * 0.035 }]}
+                  >
+                    ⭐ {prof.rating}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.availabilityText,
+                      {
+                        fontSize: width * 0.03,
+                        color: prof.available ? "#10B981" : "#6B7280",
+                      },
+                    ]}
+                  >
                     {prof.available ? "Disponível agora" : "Ocupado"}
                   </Text>
                 </View>
-                <TouchableOpacity style={[styles.connectButton, !prof.available && styles.connectButtonDisabled]}>
-                  <Text style={[styles.connectButtonText, !prof.available && styles.connectButtonTextDisabled, { fontSize: width * 0.04 }]}>
+                <TouchableOpacity
+                  style={[
+                    styles.connectButton,
+                    !prof.available && styles.connectButtonDisabled,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.connectButtonText,
+                      !prof.available && styles.connectButtonTextDisabled,
+                      { fontSize: width * 0.04 },
+                    ]}
+                  >
                     {prof.available ? "Conectar" : "Agendar"}
                   </Text>
                 </TouchableOpacity>
@@ -176,22 +352,63 @@ export default function HomePage() {
         {/* Resource Carousel */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recursos para você</Text>
-          <Text style={styles.sectionSubtitle}>Conteúdos selecionados para seu bem-estar</Text>
+          <Text style={styles.sectionSubtitle}>
+            Conteúdos selecionados para seu bem-estar
+          </Text>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.resourcesScroll}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.resourcesScroll}
+          >
             {resources.map((resource, index) => (
-              <TouchableOpacity key={index} style={[styles.resourceCard, { width: width * 0.42, padding: width * 0.045 }]}>
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.resourceCard,
+                  { width: width * 0.42, padding: width * 0.045 },
+                ]}
+              >
                 <View style={styles.resourceHeader}>
-                  <View style={[
-                    styles.resourceIcon,
-                    { backgroundColor: getResourceColor(resource.category), width: width * 0.11, height: width * 0.11, borderRadius: width * 0.055 }
-                  ]}>
-                    <Text style={[styles.resourceIconText, { fontSize: width * 0.05 }]}>{getResourceIcon(resource.category)}</Text>
+                  <View
+                    style={[
+                      styles.resourceIcon,
+                      {
+                        backgroundColor: getResourceColor(resource.category),
+                        width: width * 0.11,
+                        height: width * 0.11,
+                        borderRadius: width * 0.055,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.resourceIconText,
+                        { fontSize: width * 0.05 },
+                      ]}
+                    >
+                      {getResourceIcon(resource.category)}
+                    </Text>
                   </View>
-                  <Text style={[styles.resourceDuration, { fontSize: width * 0.03 }]}>{resource.duration}</Text>
+                  <Text
+                    style={[
+                      styles.resourceDuration,
+                      { fontSize: width * 0.03 },
+                    ]}
+                  >
+                    {resource.duration}
+                  </Text>
                 </View>
-                <Text style={[styles.resourceTitle, { fontSize: width * 0.04 }]}>{resource.title}</Text>
-                <Text style={[styles.resourceType, { fontSize: width * 0.035 }]}>{resource.type}</Text>
+                <Text
+                  style={[styles.resourceTitle, { fontSize: width * 0.04 }]}
+                >
+                  {resource.title}
+                </Text>
+                <Text
+                  style={[styles.resourceType, { fontSize: width * 0.035 }]}
+                >
+                  {resource.type}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -202,39 +419,80 @@ export default function HomePage() {
           <Text style={styles.sectionTitle}>Histórias da comunidade</Text>
           <View style={styles.testimonialsContainer}>
             <View style={[styles.testimonialCard, { padding: width * 0.045 }]}>
-              <Text style={[styles.testimonialText, { fontSize: width * 0.04 }]}>"Encontrei o apoio que precisava. Os profissionais são incríveis e me ajudaram muito."</Text>
-              <Text style={[styles.testimonialAuthor, { fontSize: width * 0.035 }]}>- Maria, 28 anos</Text>
+              <Text
+                style={[styles.testimonialText, { fontSize: width * 0.04 }]}
+              >
+                "Encontrei o apoio que precisava. Os profissionais são incríveis
+                e me ajudaram muito."
+              </Text>
+              <Text
+                style={[styles.testimonialAuthor, { fontSize: width * 0.035 }]}
+              >
+                - Maria, 28 anos
+              </Text>
             </View>
             <View style={[styles.testimonialCard, { padding: width * 0.045 }]}>
-              <Text style={[styles.testimonialText, { fontSize: width * 0.04 }]}>
-                "Os recursos de meditação mudaram minha rotina. Agora consigo lidar melhor com a ansiedade."
+              <Text
+                style={[styles.testimonialText, { fontSize: width * 0.04 }]}
+              >
+                "Os recursos de meditação mudaram minha rotina. Agora consigo
+                lidar melhor com a ansiedade."
               </Text>
-              <Text style={[styles.testimonialAuthor, { fontSize: width * 0.035 }]}>- João, 35 anos</Text>
+              <Text
+                style={[styles.testimonialAuthor, { fontSize: width * 0.035 }]}
+              >
+                - João, 35 anos
+              </Text>
             </View>
           </View>
         </View>
 
         {/* Footer */}
-        <View style={[styles.footer, { paddingHorizontal: width * 0.06, paddingVertical: height * 0.05 }]}>
-          <Text style={[styles.footerText, { fontSize: width * 0.04 }]}>Precisa de ajuda imediata?</Text>
-          <TouchableOpacity style={[styles.emergencyButton, { paddingVertical: height * 0.018, paddingHorizontal: width * 0.13 }]}>
-            <Text style={[styles.emergencyButtonText, { fontSize: width * 0.04 }]}>Suporte 24h</Text>
+        <View
+          style={[
+            styles.footer,
+            { paddingHorizontal: width * 0.06, paddingVertical: height * 0.05 },
+          ]}
+        >
+          <Text style={[styles.footerText, { fontSize: width * 0.04 }]}>
+            Precisa de ajuda imediata?
+          </Text>
+          <TouchableOpacity
+            style={[
+              styles.emergencyButton,
+              {
+                paddingVertical: height * 0.018,
+                paddingHorizontal: width * 0.13,
+              },
+            ]}
+          >
+            <Text
+              style={[styles.emergencyButtonText, { fontSize: width * 0.04 }]}
+            >
+              Suporte 24h
+            </Text>
           </TouchableOpacity>
           <View style={styles.footerLinks}>
             <TouchableOpacity>
-              <Text style={[styles.footerLink, { fontSize: width * 0.035 }]}>Privacidade</Text>
+              <Text style={[styles.footerLink, { fontSize: width * 0.035 }]}>
+                Privacidade
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity>
-              <Text style={[styles.footerLink, { fontSize: width * 0.035 }]}>Termos</Text>
+              <Text style={[styles.footerLink, { fontSize: width * 0.035 }]}>
+                Termos
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity>
-              <Text style={[styles.footerLink, { fontSize: width * 0.035 }]}>Contato</Text>
+              <Text style={[styles.footerLink, { fontSize: width * 0.035 }]}>
+                Contato
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
     </SafeAreaView>
-  )
+  );
 }
 
 function getResourceColor(category: string) {
@@ -243,8 +501,8 @@ function getResourceColor(category: string) {
     breathing: "#3B82F6",
     podcast: "#10B981",
     gratitude: "#F59E0B",
-  }
-  return colors[category] || "#6B7280"
+  };
+  return colors[category] || "#6B7280";
 }
 
 function getResourceIcon(category: string) {
@@ -253,8 +511,8 @@ function getResourceIcon(category: string) {
     breathing: "🌬️",
     podcast: "🎧",
     gratitude: "🙏",
-  }
-  return icons[category] || "📱"
+  };
+  return icons[category] || "📱";
 }
 
 const styles = StyleSheet.create({
@@ -609,4 +867,4 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     textDecorationLine: "underline",
   },
-})
+});

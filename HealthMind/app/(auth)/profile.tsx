@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,80 +13,93 @@ import {
   Alert,
   ActivityIndicator,
   Image,
-} from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import { Ionicons } from "@expo/vector-icons"
-import { useRouter } from "expo-router"
-import { useAuth, useUser } from "@clerk/clerk-expo"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import * as ImagePicker from "expo-image-picker"
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useAuth, useUser } from "@clerk/clerk-expo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ImagePicker from "expo-image-picker";
+import { getUserData, saveUserData } from "../utils/storage";
 
-const { width, height } = Dimensions.get("window")
-const STATUSBAR_HEIGHT = Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 0
+const { width, height } = Dimensions.get("window");
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? StatusBar.currentHeight ?? 24 : 0;
 
 export default function ProfilePage() {
-  const router = useRouter()
-  const { signOut } = useAuth()
-  const { user } = useUser()
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true)
-  const [darkModeEnabled, setDarkModeEnabled] = useState(false)
-  const [name, setName] = useState("Maria Silva")
-  const [email, setEmail] = useState("maria@email.com")
-  const [loading, setLoading] = useState(false)
-  const [profileImage, setProfileImage] = useState<string | null>(null)
+  const router = useRouter();
+  const { signOut } = useAuth();
+  const { user } = useUser();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const [name, setName] = useState("Maria Silva");
+  const [email, setEmail] = useState("maria@email.com");
+  const [loading, setLoading] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
+      if (!user) return;
+
       try {
-        let savedName = await AsyncStorage.getItem("profile_name")
-        let savedEmail = await AsyncStorage.getItem("profile_email")
-        const savedNotifications = await AsyncStorage.getItem("profile_notifications")
-        const savedDarkMode = await AsyncStorage.getItem("profile_darkmode")
-        let savedImage = await AsyncStorage.getItem("profile_image")
+        const userId = user.id;
 
-        // Se não houver nome salvo, pega do Clerk
-        if (user?.fullName) {
-          savedName = user.fullName
+        let savedName = await getUserData(userId, "name");
+        let savedEmail = await getUserData(userId, "email");
+        const savedNotifications = await getUserData(userId, "notifications");
+        const savedDarkMode = await getUserData(userId, "darkmode");
+        let savedImage = await getUserData(userId, "image");
+
+        if (!savedName && user?.fullName) {
+          savedName = user.fullName;
         }
 
-        // Se não houver email salvo, pega do Clerk
-        if (user?.primaryEmailAddress?.emailAddress) {
-          savedEmail = user.primaryEmailAddress.emailAddress
+        if (!savedEmail && user?.primaryEmailAddress?.emailAddress) {
+          savedEmail = user.primaryEmailAddress.emailAddress;
         }
 
-        // Se não houver imagem salva, pega do Clerk (Google)
-        if (user?.imageUrl) {
-          savedImage = user.imageUrl
+        if (!savedImage && user?.imageUrl) {
+          savedImage = user.imageUrl;
+          await saveUserData(userId, "image", savedImage);
         }
 
-        if (savedName) setName(savedName)
-        if (savedEmail) setEmail(savedEmail)
-        if (savedNotifications) setNotificationsEnabled(savedNotifications === "true")
-        if (savedDarkMode) setDarkModeEnabled(savedDarkMode === "true")
-        if (savedImage) setProfileImage(savedImage)
+        if (savedName) setName(savedName);
+        if (savedEmail) setEmail(savedEmail);
+        if (savedNotifications)
+          setNotificationsEnabled(savedNotifications === "true");
+        if (savedDarkMode) setDarkModeEnabled(savedDarkMode === "true");
+        if (savedImage) setProfileImage(savedImage);
       } catch (e) {
-        // erro ao carregar
+        console.error("Erro ao carregar perfil:", e);
       }
-    }
-    loadProfile()
-  }, [user])
+    };
+
+    loadProfile();
+  }, [user]);
 
   const handleSave = async () => {
-    setLoading(true)
+    if (!user) return;
+
+    setLoading(true);
     try {
-      await AsyncStorage.setItem("profile_name", name)
-      await AsyncStorage.setItem("profile_email", email)
-      await AsyncStorage.setItem("profile_notifications", notificationsEnabled.toString())
-      await AsyncStorage.setItem("profile_darkmode", darkModeEnabled.toString())
+      await saveUserData(user.id, "name", name);
+      await saveUserData(user.id, "email", email);
+      await saveUserData(
+        user.id,
+        "notifications",
+        notificationsEnabled.toString()
+      );
+      await saveUserData(user.id, "darkmode", darkModeEnabled.toString());
+
       setTimeout(() => {
-        setLoading(false)
-        Alert.alert("Sucesso", "Informações salvas localmente!")
-      }, 800)
+        setLoading(false);
+        Alert.alert("Sucesso", "Informações salvas localmente!");
+      }, 800);
     } catch (e) {
-      setLoading(false)
-      Alert.alert("Erro", "Não foi possível salvar as informações.")
+      setLoading(false);
+      Alert.alert("Erro", "Não foi possível salvar as informações.");
     }
-  }
+  };
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -94,19 +107,33 @@ export default function ProfilePage() {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.7,
-    })
+    });
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      setProfileImage(result.assets[0].uri)
-      await AsyncStorage.setItem("profile_image", result.assets[0].uri)
+      const uri = result.assets[0].uri;
+      setProfileImage(uri);
+      if (user?.id) {
+        await saveUserData(user.id, "image", uri);
+      }
     }
-  }
+  };
 
   return (
-    <LinearGradient colors={["#A259F7", "#c85efd", "#be41fd"]} style={styles.container}>
+    <LinearGradient
+      colors={["#A259F7", "#c85efd", "#be41fd"]}
+      style={styles.container}
+    >
       <StatusBar barStyle="light-content" backgroundColor="#A259F7" />
 
-      <View style={[styles.header, { paddingTop: STATUSBAR_HEIGHT + height * 0.02 }]}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+      <View
+        style={[
+          styles.header,
+          { paddingTop: STATUSBAR_HEIGHT + height * 0.02 },
+        ]}
+      >
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Ionicons name="arrow-back" size={24} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Meu Perfil</Text>
@@ -115,23 +142,39 @@ export default function ProfilePage() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         <LinearGradient
-          colors={["rgba(255,255,255,0.95)", "rgba(255,255,255,0.9)", "rgba(255,255,255,0.95)"]}
+          colors={[
+            "rgba(255,255,255,0.95)",
+            "rgba(255,255,255,0.9)",
+            "rgba(255,255,255,0.95)",
+          ]}
           style={styles.mainContainer}
         >
           {/* Profile Info */}
           <View style={styles.section}>
             <View style={styles.profileHeader}>
               <View style={styles.avatarContainer}>
-                <LinearGradient colors={["#A259F7", "#c85efd"]} style={styles.avatar}>
+                <LinearGradient
+                  colors={["#A259F7", "#c85efd"]}
+                  style={styles.avatar}
+                >
                   {profileImage ? (
-                    <Image source={{ uri: profileImage }} style={{ width: 80, height: 80, borderRadius: 40 }} />
+                    <Image
+                      source={{ uri: profileImage }}
+                      style={{ width: 80, height: 80, borderRadius: 40 }}
+                    />
                   ) : (
                     <Text style={styles.avatarText}>MS</Text>
                   )}
                 </LinearGradient>
-                <TouchableOpacity style={styles.editAvatarButton} onPress={pickImage}>
+                <TouchableOpacity
+                  style={styles.editAvatarButton}
+                  onPress={pickImage}
+                >
                   <Ionicons name="camera" size={16} color="#A259F7" />
                 </TouchableOpacity>
               </View>
@@ -149,21 +192,37 @@ export default function ProfilePage() {
           {/* Personal Information */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
-              <Ionicons name="person-outline" size={20} color="#A259F7" /> Informações Pessoais
+              <Ionicons name="person-outline" size={20} color="#A259F7" />{" "}
+              Informações Pessoais
             </Text>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Nome completo</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="person" size={20} color="#A259F7" style={styles.inputIcon} />
-                <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Seu nome" />
+                <Ionicons
+                  name="person"
+                  size={20}
+                  color="#A259F7"
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Seu nome"
+                />
               </View>
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Email</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="mail" size={20} color="#A259F7" style={styles.inputIcon} />
+                <Ionicons
+                  name="mail"
+                  size={20}
+                  color="#A259F7"
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={styles.input}
                   value={email}
@@ -178,7 +237,8 @@ export default function ProfilePage() {
           {/* Preferences */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
-              <Ionicons name="settings-outline" size={20} color="#A259F7" /> Preferências
+              <Ionicons name="settings-outline" size={20} color="#A259F7" />{" "}
+              Preferências
             </Text>
 
             <View style={styles.preferenceCard}>
@@ -189,7 +249,9 @@ export default function ProfilePage() {
                   </View>
                   <View style={styles.preferenceInfo}>
                     <Text style={styles.preferenceTitle}>Notificações</Text>
-                    <Text style={styles.preferenceDescription}>Receber lembretes e atualizações</Text>
+                    <Text style={styles.preferenceDescription}>
+                      Receber lembretes e atualizações
+                    </Text>
                   </View>
                 </View>
                 <Switch
@@ -207,7 +269,9 @@ export default function ProfilePage() {
                   </View>
                   <View style={styles.preferenceInfo}>
                     <Text style={styles.preferenceTitle}>Modo escuro</Text>
-                    <Text style={styles.preferenceDescription}>Tema escuro para o aplicativo</Text>
+                    <Text style={styles.preferenceDescription}>
+                      Tema escuro para o aplicativo
+                    </Text>
                   </View>
                 </View>
                 <Switch
@@ -223,7 +287,12 @@ export default function ProfilePage() {
           {/* Menu Options */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
-              <Ionicons name="shield-checkmark-outline" size={20} color="#A259F7" /> Conta
+              <Ionicons
+                name="shield-checkmark-outline"
+                size={20}
+                color="#A259F7"
+              />{" "}
+              Conta
             </Text>
 
             <View style={styles.menuCard}>
@@ -233,7 +302,9 @@ export default function ProfilePage() {
                 </View>
                 <View style={styles.menuInfo}>
                   <Text style={styles.menuTitle}>Privacidade e Segurança</Text>
-                  <Text style={styles.menuDescription}>Gerencie suas configurações de privacidade</Text>
+                  <Text style={styles.menuDescription}>
+                    Gerencie suas configurações de privacidade
+                  </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
               </TouchableOpacity>
@@ -244,7 +315,9 @@ export default function ProfilePage() {
                 </View>
                 <View style={styles.menuInfo}>
                   <Text style={styles.menuTitle}>Meus Dados</Text>
-                  <Text style={styles.menuDescription}>Visualize seu histórico e estatísticas</Text>
+                  <Text style={styles.menuDescription}>
+                    Visualize seu histórico e estatísticas
+                  </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
               </TouchableOpacity>
@@ -255,7 +328,9 @@ export default function ProfilePage() {
                 </View>
                 <View style={styles.menuInfo}>
                   <Text style={styles.menuTitle}>Ajuda e Suporte</Text>
-                  <Text style={styles.menuDescription}>Central de ajuda e contato</Text>
+                  <Text style={styles.menuDescription}>
+                    Central de ajuda e contato
+                  </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
               </TouchableOpacity>
@@ -264,13 +339,24 @@ export default function ProfilePage() {
 
           {/* Actions */}
           <View style={styles.section}>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
-              <LinearGradient colors={["#A259F7", "#c85efd"]} style={styles.saveButtonGradient}>
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={handleSave}
+              disabled={loading}
+            >
+              <LinearGradient
+                colors={["#A259F7", "#c85efd"]}
+                style={styles.saveButtonGradient}
+              >
                 {loading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <>
-                    <Ionicons name="checkmark-circle" size={20} color="#ffffff" />
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={20}
+                      color="#ffffff"
+                    />
                     <Text style={styles.saveButtonText}>Salvar Alterações</Text>
                   </>
                 )}
@@ -280,8 +366,8 @@ export default function ProfilePage() {
             <TouchableOpacity
               style={styles.logoutButton}
               onPress={async () => {
-                await signOut()
-                router.replace("/login")
+                await signOut();
+                router.replace("/login");
               }}
             >
               <Ionicons name="log-out-outline" size={20} color="#EF4444" />
@@ -290,10 +376,8 @@ export default function ProfilePage() {
           </View>
         </LinearGradient>
       </ScrollView>
-
-     
     </LinearGradient>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -600,4 +684,4 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 8,
   },
-})
+});
