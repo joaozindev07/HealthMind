@@ -379,6 +379,7 @@ const styles = StyleSheet.create({
     elevation: 8,
     backgroundColor: "#fff",
     minHeight: height * 0.65,
+    marginBottom: -150,
   },
   inputContainer: {
     marginBottom: 20,

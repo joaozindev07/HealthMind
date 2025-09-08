@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import {
   View,
@@ -47,7 +45,7 @@ export default function ProfilePage() {
         let savedImage = await AsyncStorage.getItem("profile_image")
 
         // Se não houver nome salvo, pega do Clerk
-        if (!savedName && user?.fullName) {
+        if (user?.fullName) {
           savedName = user.fullName
         }
 
@@ -57,7 +55,7 @@ export default function ProfilePage() {
         }
 
         // Se não houver imagem salva, pega do Clerk (Google)
-        if (!savedImage && user?.imageUrl) {
+        if (user?.imageUrl) {
           savedImage = user.imageUrl
         }
 
