@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+// useFocusEffect não é necessário no Expo Router - usando useEffect
 import { getUserData } from "../utils/storage";
 import { useUser } from "@clerk/clerk-expo";
 import {
@@ -87,16 +87,14 @@ export default function HomePage() {
     },
   ];
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const loadProfileImage = async () => {
-        const savedImage = await AsyncStorage.getItem("profile_image");
-        setProfileImage(savedImage);
-      };
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      const savedImage = await AsyncStorage.getItem("profile_image");
+      setProfileImage(savedImage);
+    };
 
-      loadProfileImage();
-    }, [])
-  );
+    loadProfileImage();
+  }, []);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -150,7 +148,7 @@ export default function HomePage() {
             </View>
             <TouchableOpacity
               style={styles.profileButton}
-              onPress={() => router.push("/profile")}
+              onPress={() => router.push("/(auth)/profile")}
             >
               {profileImage ? (
                 <Image

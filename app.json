@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "y",
+      "bundleIdentifier": "com.anonymous.healthmind",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
