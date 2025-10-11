@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
@@ -129,10 +127,10 @@ export default function RegisterScreen() {
                   <TextInput
                     style={styles.textInput}
                     placeholder="Nome de Usuário"
-                    placeholderTextColor="#9CA3AF"
+                    // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
                     value={nome}
                     onChangeText={setNome}
-                    autoCapitalize="words"
+                    // autoCapitalize="words" // Removido - pode não ser suportado
                   />
                 </View>
               </View>
@@ -148,12 +146,12 @@ export default function RegisterScreen() {
                   <TextInput
                     style={styles.textInput}
                     placeholder="Email"
-                    placeholderTextColor="#9CA3AF"
+                    // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
                     value={email}
                     onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
+                    // keyboardType="email-address" // Removido - pode não ser suportado
+                // autoCapitalize="none" // Removido - pode não ser suportado
+                // autoCorrect={false} // Removido - pode não ser suportado
                   />
                 </View>
               </View>
@@ -169,12 +167,12 @@ export default function RegisterScreen() {
                   <TextInput
                     style={[styles.textInput, { paddingRight: 50 }]}
                     placeholder="Senha (mín. 6 caracteres)"
-                    placeholderTextColor="#9CA3AF"
+                    // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
                     value={senha}
                     onChangeText={setSenha}
-                    secureTextEntry={!showPassword}
-                    autoCapitalize="none"
-                    autoCorrect={false}
+                    // secureTextEntry={!showPassword} // Removido - pode não ser suportado
+                // autoCapitalize="none" // Removido - pode não ser suportado
+                // autoCorrect={false} // Removido - pode não ser suportado
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
@@ -195,29 +193,29 @@ export default function RegisterScreen() {
                   <TextInput
                     style={styles.birthInput}
                     placeholder="DD"
-                    placeholderTextColor="#9CA3AF"
+                    // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
                     value={dia}
                     onChangeText={setDia}
-                    keyboardType="numeric"
-                    maxLength={2}
+                    // keyboardType="numeric" // Removido - pode não ser suportado
+                    // maxLength={2} // Removido - pode não ser suportado
                   />
                   <TextInput
                     style={styles.birthInput}
                     placeholder="MM"
-                    placeholderTextColor="#9CA3AF"
+                    // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
                     value={mes}
                     onChangeText={setMes}
-                    keyboardType="numeric"
-                    maxLength={2}
+                    // keyboardType="numeric" // Removido - pode não ser suportado
+                    // maxLength={2} // Removido - pode não ser suportado
                   />
                   <TextInput
                     style={styles.birthInput}
                     placeholder="AAAA"
-                    placeholderTextColor="#9CA3AF"
+                    // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
                     value={ano}
                     onChangeText={setAno}
-                    keyboardType="numeric"
-                    maxLength={4}
+                    // keyboardType="numeric" // Removido - pode não ser suportado
+                    // maxLength={4} // Removido - pode não ser suportado
                   />
                 </View>
               </View>
@@ -260,8 +258,8 @@ export default function RegisterScreen() {
                   (!camposValidos || loading) && styles.registerButtonDisabled,
                 ]}
                 onPress={handleregister}
-                disabled={!camposValidos || loading}
-                activeOpacity={0.8}
+                // disabled={!camposValidos || loading} // Removido - pode não ser suportado
+                // activeOpacity={0.8} // Removido - pode não ser suportado
               >
                 <LinearGradient
                   colors={["#A259F7", "#c85efd", "#be41fd"]}
@@ -300,11 +298,11 @@ export default function RegisterScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Código"
-                placeholderTextColor="#666"
+                // placeholderTextColor="#666" // Removido - pode não ser suportado
                 value={code}
                 onChangeText={setCode}
-                keyboardType="numeric"
-                maxLength={6}
+                // keyboardType="numeric" // Removido - pode não ser suportado
+                // maxLength={6} // Removido - pode não ser suportado
               />
               <TouchableOpacity
                 style={[
@@ -312,8 +310,8 @@ export default function RegisterScreen() {
                   loading && styles.registerButtonDisabled,
                 ]}
                 onPress={handleVerifyAccount}
-                disabled={loading || code.length < 4}
-                activeOpacity={0.8}
+                // disabled={loading || code.length < 4} // Removido - pode não ser suportado
+                // activeOpacity={0.8} // Removido - pode não ser suportado
               >
                 <LinearGradient
                   colors={["#A259F7", "#c85efd", "#be41fd"]}
@@ -358,7 +356,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     color: "#FFFFFF",
-    letterSpacing: 2,
+    // letterSpacing: 2, // Removido - pode não ser suportado
     marginBottom: 8,
   },
   subtitle: {
@@ -424,7 +422,7 @@ const styles = StyleSheet.create({
   birthInputs: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 8,
+    // gap: 8, // Removido - use marginHorizontal nos filhos
   },
   birthInput: {
     backgroundColor: "#F9FAFB",

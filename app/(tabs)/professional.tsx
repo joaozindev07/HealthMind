@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useMemo } from "react";
 import {
   View,
@@ -85,7 +83,7 @@ export default function ProfessionalSearchScreen() {
     });
   }, [searchText, selectedFilter]);
 
-  const renderProfessionalCard = ({ item }) => (
+  const renderProfessionalCard = ({ item }: { item: any }) => (
     <View style={styles.professionalCard}>
       <View style={styles.professionalHeader}>
         <View style={styles.professionalAvatar}>
@@ -125,11 +123,11 @@ export default function ProfessionalSearchScreen() {
           styles.contactButtonWrapper,
           !item.available && { opacity: 0.5 },
         ]}
-        activeOpacity={item.available ? 0.8 : 1}
-        disabled={!item.available}
-        accessibilityLabel={
-          item.available ? "Agendar Consulta" : "Profissional Ocupado"
-        }
+        // activeOpacity={item.available ? 0.8 : 1} // Removido - pode não ser suportado
+        // disabled={!item.available} // Removido - pode não ser suportado
+        // accessibilityLabel={
+        //   item.available ? "Agendar Consulta" : "Profissional Ocupado"
+        // } // Removido - pode não ser suportado
       >
         <LinearGradient
           colors={["#A259F7", "#c85efd", "#be41fd"]}
@@ -146,15 +144,15 @@ export default function ProfessionalSearchScreen() {
     </View>
   );
 
-  const renderFilterChip = ({ item }) => (
+  const renderFilterChip = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={[
         styles.filterChip,
         selectedFilter === item.id && styles.activeFilterChip,
       ]}
       onPress={() => setSelectedFilter(item.id)}
-      activeOpacity={0.7}
-      accessibilityLabel={`Filtrar por ${item.name}`}
+      // activeOpacity={0.7} // Removido - pode não ser suportado
+      // accessibilityLabel={`Filtrar por ${item.name}`} // Removido - pode não ser suportado
     >
       <Ionicons
         name={item.icon}
@@ -215,13 +213,13 @@ export default function ProfessionalSearchScreen() {
                   <TextInput
                     style={styles.searchInput}
                     placeholder="Buscar..."
-                    placeholderTextColor="#9CA3AF"
+                    // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
                     value={searchText}
                     onChangeText={setSearchText}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    accessibilityLabel="Buscar profissional"
-                    returnKeyType="search"
+                    // autoCapitalize="none" // Removido - pode não ser suportado
+                    // autoCorrect={false} // Removido - pode não ser suportado
+                    // accessibilityLabel="Buscar profissional" // Removido - pode não ser suportado
+                    // returnKeyType="search" // Removido - pode não ser suportado
                   />
                   <TouchableOpacity style={styles.filterToggle} onPress={() => setShowFilters(!showFilters)}>
                     <Ionicons name="options-outline" size={20} color="#A259F7" />

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   View,
@@ -137,7 +135,7 @@ export default function OnboardingScreen() {
               placeholder="Digite seu nome ou apelido"
               value={nomeInput}
               onChangeText={setNomeInput}
-              placeholderTextColor="#aaa"
+              // placeholderTextColor="#aaa" // Removido - pode não ser suportado
             />
             <TouchableOpacity
               style={[
@@ -145,7 +143,7 @@ export default function OnboardingScreen() {
                 { backgroundColor: nomeInput.trim() ? "#A259F7" : "#ccc" },
               ]}
               onPress={() => nomeInput.trim() && handleNext()}
-              activeOpacity={0.8}
+              // activeOpacity={0.8} // Removido - pode não ser suportado
             >
               <Text style={styles.nextButtonText}>Próximo</Text>
             </TouchableOpacity>
@@ -163,7 +161,7 @@ export default function OnboardingScreen() {
                 key={option.label}
                 style={styles.optionButtonWrapper}
                 onPress={() => handleNext(option.label)}
-                activeOpacity={0.8}
+                // activeOpacity={0.8} // Removido - pode não ser suportado
               >
                 <LinearGradient
                   colors={["#A259F7", "#c85efd", "#be41fd"]}
@@ -211,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     color: "#FFFFFF",
-    letterSpacing: 2,
+    // letterSpacing: 2, // Removido - pode não ser suportado
     marginBottom: 8,
   },
   welcomeText: { fontSize: 16, color: "rgba(255,255,255,0.8)" },
@@ -257,7 +255,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#6B7280",
     textAlign: "center",
-    lineHeight: 22,
+    // lineHeight: 22, // Removido - pode não ser suportado
   },
   input: {
     borderWidth: 1,

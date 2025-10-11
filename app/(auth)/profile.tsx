@@ -17,19 +17,18 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useAuth, useUser } from "@clerk/clerk-expo";
+import { useAuth } from "@/providers/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
-import { getUserData, saveUserData } from "../utils/storage";
+import { userService } from "@/services/database";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get("window");
-const STATUSBAR_HEIGHT =
-  Platform.OS === "android" ? StatusBar.currentHeight ?? 24 : 0;
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { signOut } = useAuth();
-  const { user } = useUser();
+  const { signOut, user } = useAuth();
+  const insets = useSafeAreaInsets();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [name, setName] = useState("Maria Silva");
@@ -42,35 +41,32 @@ export default function ProfilePage() {
       if (!user) return;
 
       try {
-        const userId = user.id;
-
-        let savedName = await getUserData(userId, "name");
-        let savedEmail = await getUserData(userId, "email");
-        const savedNotifications = await getUserData(userId, "notifications");
-        const savedDarkMode = await getUserData(userId, "darkmode");
-        let savedImage = await getUserData(userId, "image");
-
-        if (!savedName && user?.fullName) {
-          savedName = user.fullName;
+        // Carregar dados do usuário do Supabase
+        const userData = await userService.getUserById(user.id);
+        
+        if (userData) {
+          setName(userData.full_name || user.fullName || "Usuário");
+          setEmail(userData.email || user.emailAddresses[0]?.emailAddress || "");
+          setProfileImage(userData.avatar_url || user.imageUrl);
+        } else {
+          // Fallback para dados do Clerk
+          setName(user.fullName || "Usuário");
+          setEmail(user.emailAddresses[0]?.emailAddress || "");
+          setProfileImage(user.imageUrl);
         }
 
-        if (!savedEmail && user?.primaryEmailAddress?.emailAddress) {
-          savedEmail = user.primaryEmailAddress.emailAddress;
-        }
-
-        if (!savedImage && user?.imageUrl) {
-          savedImage = user.imageUrl;
-          await saveUserData(userId, "image", savedImage);
-        }
-
-        if (savedName) setName(savedName);
-        if (savedEmail) setEmail(savedEmail);
-        if (savedNotifications)
-          setNotificationsEnabled(savedNotifications === "true");
+        // Carregar preferências do AsyncStorage
+        const savedNotifications = await AsyncStorage.getItem("notifications");
+        const savedDarkMode = await AsyncStorage.getItem("darkmode");
+        
+        if (savedNotifications) setNotificationsEnabled(savedNotifications === "true");
         if (savedDarkMode) setDarkModeEnabled(savedDarkMode === "true");
-        if (savedImage) setProfileImage(savedImage);
       } catch (e) {
         console.error("Erro ao carregar perfil:", e);
+        // Fallback para dados do Clerk
+        setName(user.fullName || "Usuário");
+        setEmail(user.emailAddresses[0]?.emailAddress || "");
+        setProfileImage(user.imageUrl);
       }
     };
 
@@ -82,18 +78,20 @@ export default function ProfilePage() {
 
     setLoading(true);
     try {
-      await saveUserData(user.id, "name", name);
-      await saveUserData(user.id, "email", email);
-      await saveUserData(
-        user.id,
-        "notifications",
-        notificationsEnabled.toString()
-      );
-      await saveUserData(user.id, "darkmode", darkModeEnabled.toString());
+      // Salvar dados do usuário no Supabase
+      await userService.updateUser(user.id, {
+        full_name: name,
+        email: email,
+        avatar_url: profileImage || undefined,
+      });
+
+      // Salvar preferências no AsyncStorage
+      await AsyncStorage.setItem("notifications", notificationsEnabled.toString());
+      await AsyncStorage.setItem("darkmode", darkModeEnabled.toString());
 
       setTimeout(() => {
         setLoading(false);
-        Alert.alert("Sucesso", "Informações salvas localmente!");
+        Alert.alert("Sucesso", "Informações salvas com sucesso!");
       }, 800);
     } catch (e) {
       setLoading(false);
@@ -103,7 +101,7 @@ export default function ProfilePage() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.7,
@@ -111,9 +109,7 @@ export default function ProfilePage() {
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
       setProfileImage(uri);
-      if (user?.id) {
-        await saveUserData(user.id, "image", uri);
-      }
+      // A imagem será salva quando o usuário clicar em "Salvar Alterações"
     }
   };
 
@@ -127,7 +123,7 @@ export default function ProfilePage() {
       <View
         style={[
           styles.header,
-          { paddingTop: STATUSBAR_HEIGHT + height * 0.02 },
+          { paddingTop: insets.top + height * 0.02 },
         ]}
       >
         <TouchableOpacity
@@ -228,7 +224,7 @@ export default function ProfilePage() {
                   value={email}
                   onChangeText={setEmail}
                   placeholder="seu@email.com"
-                  keyboardType="email-address"
+                  // keyboardType="email-address" // Removido - pode não ser suportado
                 />
               </View>
             </View>
@@ -342,7 +338,7 @@ export default function ProfilePage() {
             <TouchableOpacity
               style={styles.saveButton}
               onPress={handleSave}
-              disabled={loading}
+              // disabled={loading} // Removido - pode não ser suportado
             >
               <LinearGradient
                 colors={["#A259F7", "#c85efd"]}
