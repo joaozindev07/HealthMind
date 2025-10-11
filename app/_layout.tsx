@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { Slot, useRouter, useSegments } from "expo-router";
-import { AuthProvider, useAuth } from "./providers/AuthProvider";
+import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const publishkey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
 const InitialLayout = () => {
-  const { isSignedIn, loading } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
@@ -27,13 +30,13 @@ const InitialLayout = () => {
       }
     };
 
-    if (!loading) {
+    if (isLoaded) {
       checkOnboarding();
     }
-  }, [loading, isSignedIn]);
+  }, [isLoaded, isSignedIn]);
 
   useEffect(() => {
-    if (loading || !onboardingChecked) return;
+    if (!isLoaded || !onboardingChecked) return;
 
     const inAuthGroup = segments[0] === "(auth)";
     const inPublicGroup = segments[0] === "(public)";
@@ -54,8 +57,8 @@ const InitialLayout = () => {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishkey}>
       <InitialLayout />
-    </AuthProvider>
+    </ClerkProvider>
   );
 }

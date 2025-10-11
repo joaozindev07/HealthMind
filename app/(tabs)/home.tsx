@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
-import { useAuth } from "@/providers/AuthProvider";
-import { moodService, professionalService } from "@/services/database";
+// useFocusEffect não é necessário no Expo Router - usando useEffect
+import { getUserData } from "../utils/storage";
+import { useUser } from "@clerk/clerk-expo";
 import {
   View,
   Text,
@@ -19,19 +20,16 @@ import { useRouter } from "expo-router";
 import React from "react";
 
 const { width, height } = Dimensions.get("window");
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? StatusBar.currentHeight ?? 24 : 0;
 
 export default function HomePage() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
-  const STATUSBAR_HEIGHT = insets.top;
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [dailyNote, setDailyNote] = useState("");
-  const { user } = useAuth();
+  const { user } = useUser();
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [professionals, setProfessionals] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const moods = [
     { emoji: "😊", label: "Feliz", color: "#10B981" },
@@ -41,21 +39,26 @@ export default function HomePage() {
     { emoji: "😡", label: "Irritado", color: "#EF4444" },
   ];
 
-  // Carregar profissionais do Supabase
-  useEffect(() => {
-    const loadProfessionals = async () => {
-      try {
-        const data = await professionalService.getAllProfessionals();
-        setProfessionals(data);
-      } catch (error) {
-        console.error('Erro ao carregar profissionais:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProfessionals();
-  }, []);
+  const professionals = [
+    {
+      name: "Dra. Ana Silva",
+      specialty: "Ansiedade e Depressão",
+      rating: "4.9",
+      available: true,
+    },
+    {
+      name: "Dr. Carlos Lima",
+      specialty: "Terapia Cognitiva",
+      rating: "4.8",
+      available: true,
+    },
+    {
+      name: "Dra. Maria Santos",
+      specialty: "Relacionamentos",
+      rating: "4.9",
+      available: false,
+    },
+  ];
 
   const resources = [
     {
@@ -86,31 +89,23 @@ export default function HomePage() {
 
   useEffect(() => {
     const loadProfileImage = async () => {
-      if (user?.imageUrl) {
-        setProfileImage(user.imageUrl);
-      } else {
-        const savedImage = await AsyncStorage.getItem("profile_image");
-        setProfileImage(savedImage);
-      }
+      const savedImage = await AsyncStorage.getItem("profile_image");
+      setProfileImage(savedImage);
     };
 
     loadProfileImage();
-  }, [user]);
+  }, []);
 
-  const saveMoodEntry = async () => {
-    if (!selectedMood || !user) return;
-    
-    try {
-      await moodService.saveMoodEntry(user.id, selectedMood, dailyNote);
-      // Limpar campos após salvar
-      setSelectedMood(null);
-      setDailyNote("");
-      // Mostrar feedback de sucesso
-      console.log('Humor salvo com sucesso!');
-    } catch (error) {
-      console.error('Erro ao salvar humor:', error);
-    }
-  };
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (!user) return;
+      const savedImage = await getUserData(user.id, "image");
+      if (savedImage) {
+        setProfileImage(savedImage);
+      }
+    };
+    fetchImage();
+  }, [user]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -142,7 +137,7 @@ export default function HomePage() {
                 <TextInput
                   style={styles.searchInput}
                   placeholder="Buscar recursos..."
-                  // placeholderTextColor="#6B7280" // Removido - pode não ser suportado
+                  placeholderTextColor="#6B7280"
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                 />
@@ -228,14 +223,14 @@ export default function HomePage() {
                   { fontSize: width * 0.045, minHeight: height * 0.13 },
                 ]}
                 placeholder={`Conte mais sobre como você está se sentindo ${selectedMood.toLowerCase()}...`}
-                // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
-                // multiline // Removido - pode não ser suportado
-                // numberOfLines={4} // Removido - pode não ser suportado
+                placeholderTextColor="#9CA3AF"
+                multiline
+                numberOfLines={4}
                 value={dailyNote}
                 onChangeText={setDailyNote}
-                // textAlignVertical="top" // Removido - pode não ser suportado
+                textAlignVertical="top"
               />
-              <TouchableOpacity style={styles.saveNoteButton} onPress={saveMoodEntry}>
+              <TouchableOpacity style={styles.saveNoteButton}>
                 <Text
                   style={[styles.saveNoteText, { fontSize: width * 0.045 }]}
                 >
@@ -258,7 +253,7 @@ export default function HomePage() {
             showsHorizontalScrollIndicator={false}
             style={styles.professionalsScroll}
           >
-            {professionals.map((prof: any, index: number) => (
+            {professionals.map((prof, index) => (
               <View
                 key={index}
                 style={[
@@ -565,13 +560,13 @@ const styles = StyleSheet.create({
     fontSize: width * 0.08,
     fontWeight: "700",
     color: "#1F2937",
-    // lineHeight: width * 0.1, // Removido - pode não ser suportado
+    lineHeight: width * 0.1,
     marginBottom: height * 0.015,
   },
   heroSubtitle: {
     fontSize: width * 0.045,
     color: "#6B7280",
-    // lineHeight: width * 0.06, // Removido - pode não ser suportado
+    lineHeight: width * 0.06,
     marginBottom: height * 0.04,
     marginRight: -55,
   },
@@ -690,7 +685,7 @@ const styles = StyleSheet.create({
   },
   noteInput: {
     color: "#1F2937",
-    // textAlignVertical: "top", // Removido - pode não ser suportado
+    textAlignVertical: "top",
     marginBottom: height * 0.02,
   },
   saveNoteButton: {
@@ -825,7 +820,7 @@ const styles = StyleSheet.create({
 
   // Testimonials
   testimonialsContainer: {
-    // gap: height * 0.02, // Removido - use marginBottom nos filhos
+    gap: height * 0.02,
   },
   testimonialCard: {
     backgroundColor: "#F1F5F9",
@@ -833,9 +828,9 @@ const styles = StyleSheet.create({
   },
   testimonialText: {
     color: "#1F2937",
-    // lineHeight: width * 0.055, // Removido - pode não ser suportado
+    lineHeight: width * 0.055,
     marginBottom: height * 0.015,
-    // fontStyle: "italic", // Removido - pode não ser suportado
+    fontStyle: "italic",
   },
   testimonialAuthor: {
     color: "#6B7280",
@@ -864,10 +859,10 @@ const styles = StyleSheet.create({
   },
   footerLinks: {
     flexDirection: "row",
-    // gap: width * 0.06, // Removido - use marginHorizontal nos filhos
+    gap: width * 0.06,
   },
   footerLink: {
     color: "#6B7280",
-    // textDecorationLine: "underline", // Removido - pode não ser suportado
+    textDecorationLine: "underline",
   },
 });

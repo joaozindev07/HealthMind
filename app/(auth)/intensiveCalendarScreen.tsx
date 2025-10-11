@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   View,
@@ -77,36 +79,36 @@ export default function IntensiveCalendarScreen() {
   const currentMonth = monthNames[currentDate.getMonth()];
   const currentYear = currentDate.getFullYear();
 
-  const renderCalendarDay = (item: any, index: number) => {
+  const renderCalendarDay = (item, index) => {
     if (item.isEmpty) {
       return <View key={index} style={styles.emptyDay} />;
     }
 
-    let dayStyle: any = [styles.calendarDay];
-    let textStyle: any = [styles.dayText];
+    let dayStyle = [styles.calendarDay];
+    let textStyle = [styles.dayText];
     let iconName = null;
 
     if (item.isCompleted) {
-      dayStyle = [styles.calendarDay, styles.completedDay];
-      textStyle = [styles.dayText, styles.completedDayText];
+      dayStyle.push(styles.completedDay);
+      textStyle.push(styles.completedDayText);
       iconName = "checkmark";
     } else if (item.isCurrent) {
-      dayStyle = [styles.calendarDay, styles.currentDay];
-      textStyle = [styles.dayText, styles.currentDayText];
+      dayStyle.push(styles.currentDay);
+      textStyle.push(styles.currentDayText);
       iconName = "play";
     } else if (item.isIntensiveDay) {
-      dayStyle = [styles.calendarDay, styles.intensiveDay];
-      textStyle = [styles.dayText, styles.intensiveDayText];
+      dayStyle.push(styles.intensiveDay);
+      textStyle.push(styles.intensiveDayText);
     } else if (item.isToday) {
-      dayStyle = [styles.calendarDay, styles.todayDay];
-      textStyle = [styles.dayText, styles.todayText];
+      dayStyle.push(styles.todayDay);
+      textStyle.push(styles.todayText);
     }
 
     return (
       <TouchableOpacity
         key={index}
         style={dayStyle}
-        // activeOpacity={item.isIntensiveDay ? 0.7 : 1} // Removido - pode não ser suportado
+        activeOpacity={item.isIntensiveDay ? 0.7 : 1}
       >
         {iconName ? (
           <View style={styles.dayContent}>
@@ -545,7 +547,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   actionButtons: {
-    // gap: 12, // Removido - use marginBottom nos filhos
+    gap: 12,
     alignItems: "center", // centraliza botões
   },
   primaryButton: {

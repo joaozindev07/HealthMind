@@ -1,4 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+"use client";
+
+import { useState, useRef } from "react";
 import {
   Animated,
   View,
@@ -12,8 +14,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { useAuth } from "@/providers/AuthProvider";
-import { challengeService, achievementService } from "@/services/database";
 
 const { width, height } = Dimensions.get("window");
 
@@ -116,160 +116,78 @@ const achievements = [
 ];
 
 export default function IntensiveMoodScreen() {
-  const { user } = useAuth();
   const [currentStreak, setCurrentStreak] = useState(3);
   const [totalXP, setTotalXP] = useState(225);
   const [selectedTab, setSelectedTab] = useState("challenges");
-  const [challenges, setChallenges] = useState<any[]>([]);
-  const [achievements, setAchievements] = useState<any[]>([]);
-  const [userChallenges, setUserChallenges] = useState<any[]>([]);
-  const [userAchievements, setUserAchievements] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const initialTop = height * 0.45;
+  const completedChallenges = dailyChallenges.filter((c) => c.completed).length;
+  const progressPercentage =
+    (completedChallenges / dailyChallenges.length) * 100;
 
-  // Carregar dados do Supabase
-  useEffect(() => {
-    const loadData = async () => {
-      if (!user) return;
-
-      try {
-        const [challengesData, achievementsData, userChallengesData, userAchievementsData] = await Promise.all([
-          challengeService.getAllChallenges(),
-          achievementService.getAllAchievements(),
-          challengeService.getUserChallenges(user.id),
-          achievementService.getUserAchievements(user.id)
-        ]);
-
-        setChallenges(challengesData);
-        setAchievements(achievementsData);
-        setUserChallenges(userChallengesData);
-        setUserAchievements(userAchievementsData);
-
-        // Calcular XP total
-        const totalXP = userChallengesData
-          .filter((uc: any) => uc.completed)
-          .reduce((sum: number, uc: any) => sum + (uc.challenges?.xp || 0), 0);
-        setTotalXP(totalXP);
-
-        // Calcular sequência atual
-        const completedCount = userChallengesData.filter((uc: any) => uc.completed).length;
-        setCurrentStreak(completedCount);
-
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, [user]);
-
-  const completedChallenges = userChallenges.filter((uc) => uc.completed).length;
-  const progressPercentage = challenges.length > 0 ? (completedChallenges / challenges.length) * 100 : 0;
-
-  const completeChallenge = async (challengeId: string) => {
-    if (!user) return;
-
-    try {
-      await challengeService.completeChallenge(user.id, challengeId);
-      
-      // Atualizar estado local
-      const updatedUserChallenges = userChallenges.map(uc => 
-        uc.challenge_id === challengeId ? { ...uc, completed: true, completed_at: new Date().toISOString() } : uc
-      );
-      setUserChallenges(updatedUserChallenges);
-
-      // Recalcular XP
-      const newTotalXP = updatedUserChallenges
-        .filter(uc => uc.completed)
-        .reduce((sum, uc) => sum + (uc.challenges?.xp || 0), 0);
-      setTotalXP(newTotalXP);
-
-      console.log('Desafio completado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao completar desafio:', error);
-    }
-  };
-
-  const renderChallengeCard = ({ item }: { item: any }) => {
-    const userChallenge = userChallenges.find(uc => uc.challenge_id === item.id);
-    const isCompleted = userChallenge?.completed || false;
-    const isCurrent = !isCompleted && challenges.indexOf(item) === completedChallenges;
-
-    return (
-      <TouchableOpacity
-        key={item.id}
-        style={[
-          styles.challengeCard,
-          isCompleted && styles.completedCard,
-          isCurrent && styles.currentCard,
-        ]}
-        // activeOpacity={0.9} // Removido - pode não ser suportado
-      >
-        <View style={styles.challengeHeader}>
-          <View
-            style={[
-              styles.challengeIconContainer,
-              isCompleted && styles.completedIconContainer,
-            ]}
-          >
-            <Ionicons
-              name={isCompleted ? "checkmark" : item.icon}
-              size={26}
-              color={isCompleted ? "#FFFFFF" : "#A259F7"}
-            />
-          </View>
-          <View style={styles.challengeInfo}>
-            <Text style={styles.challengeTitle}>{item.title}</Text>
-            <Text style={styles.challengeDescription}>{item.description}</Text>
-          </View>
-        </View>
-
-        {isCurrent && (
-          <View style={styles.challengeFooter}>
-            <TouchableOpacity 
-              style={styles.startButton}
-              onPress={() => completeChallenge(item.id)}
-            >
-              <Text style={styles.startButtonText}>Começar</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </TouchableOpacity>
-    );
-  };
-
-  const renderAchievement = ({ item }: { item: any }) => {
-    const userAchievement = userAchievements.find(ua => ua.achievement_id === item.id);
-    const isUnlocked = !!userAchievement;
-
-    return (
-      <View
-        key={item.id}
-        style={[
-          styles.achievementCard,
-          !isUnlocked && styles.lockedAchievement,
-        ]}
-      >
+  const renderChallengeCard = ({ item }) => (
+    <TouchableOpacity
+      key={item.id}
+      style={[
+        styles.challengeCard,
+        item.completed && styles.completedCard,
+        item.current && styles.currentCard,
+      ]}
+      activeOpacity={0.9}
+    >
+      <View style={styles.challengeHeader}>
         <View
-          style={[styles.achievementIcon, isUnlocked && styles.unlockedIcon]}
+          style={[
+            styles.challengeIconContainer,
+            item.completed && styles.completedIconContainer,
+          ]}
         >
           <Ionicons
-            name={item.icon}
+            name={item.completed ? "checkmark" : item.icon}
             size={26}
-            color={isUnlocked ? "#FFC107" : "#9CA3AF"}
+            color={item.completed ? "#FFFFFF" : "#A259F7"}
           />
         </View>
-        <View style={styles.achievementInfo}>
-          <Text style={styles.achievementTitle}>{item.title}</Text>
-          <Text style={styles.achievementDescription}>{item.description}</Text>
+        <View style={styles.challengeInfo}>
+          <Text style={styles.challengeTitle}>{item.title}</Text>
+          <Text style={styles.challengeDescription}>{item.description}</Text>
         </View>
       </View>
-    );
-  };
+
+      {item.current && (
+        <View style={styles.challengeFooter}>
+          <TouchableOpacity style={styles.startButton}>
+            <Text style={styles.startButtonText}>Começar</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+
+  const renderAchievement = ({ item }) => (
+    <View
+      key={item.id}
+      style={[
+        styles.achievementCard,
+        !item.unlocked && styles.lockedAchievement,
+      ]}
+    >
+      <View
+        style={[styles.achievementIcon, item.unlocked && styles.unlockedIcon]}
+      >
+        <Ionicons
+          name={item.icon}
+          size={26}
+          color={item.unlocked ? "#FFC107" : "#9CA3AF"}
+        />
+      </View>
+      <View style={styles.achievementInfo}>
+        <Text style={styles.achievementTitle}>{item.title}</Text>
+        <Text style={styles.achievementDescription}>{item.description}</Text>
+      </View>
+    </View>
+  );
 
   return (
     <LinearGradient
@@ -391,7 +309,7 @@ export default function IntensiveMoodScreen() {
           </TouchableOpacity>
 
           {selectedTab === "challenges"
-            ? challenges.map((item) => renderChallengeCard({ item }))
+            ? dailyChallenges.map((item) => renderChallengeCard({ item }))
             : achievements.map((item) => renderAchievement({ item }))}
 
           {selectedTab === "achievements" && (

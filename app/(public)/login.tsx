@@ -147,12 +147,12 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.textInput}
                 placeholder="Email"
-                // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
+                placeholderTextColor="#9CA3AF"
                 value={email}
                 onChangeText={setEmail}
-                // keyboardType="email-address" // Removido - pode não ser suportado
-                // autoCapitalize="none" // Removido - pode não ser suportado
-                // autoCorrect={false} // Removido - pode não ser suportado
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
           </View>
@@ -169,12 +169,12 @@ export default function LoginScreen() {
               <TextInput
                 style={[styles.textInput, { paddingRight: 50 }]}
                 placeholder="Senha"
-                // placeholderTextColor="#9CA3AF" // Removido - pode não ser suportado
+                placeholderTextColor="#9CA3AF"
                 value={senha}
                 onChangeText={setSenha}
-                // secureTextEntry={!showPassword} // Removido - pode não ser suportado
-                // autoCapitalize="none" // Removido - pode não ser suportado
-                // autoCorrect={false} // Removido - pode não ser suportado
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
               <TouchableOpacity
                 style={styles.eyeButton}
@@ -201,8 +201,8 @@ export default function LoginScreen() {
               isLoading && styles.loginButtonDisabled,
             ]}
             onPress={handleLogin}
-            // disabled={isLoading} // Removido - pode não ser suportado
-            // activeOpacity={0.8} // Removido - pode não ser suportado
+            disabled={isLoading}
+            activeOpacity={0.8}
           >
             <LinearGradient
               colors={["#A259F7", "#c85efd", "#be41fd"]}
@@ -230,11 +230,11 @@ export default function LoginScreen() {
 
           {/* Social Buttons */}
           <View style={styles.socialButtonsContainer}>
-            <TouchableOpacity style={styles.socialButton} /* activeOpacity={0.7} */ onPress={OnGoogleSignIn}>
+            <TouchableOpacity style={styles.socialButton} activeOpacity={0.7} onPress={OnGoogleSignIn}>
               <Text style={styles.socialButtonText}>G</Text>
               <Text style={styles.socialButtonLabel}>Google</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton} /* activeOpacity={0.7} */>
+            <TouchableOpacity style={styles.socialButton} activeOpacity={0.7}>
               <Text style={styles.socialButtonText}>f</Text>
               <Text style={styles.socialButtonLabel}>Facebook</Text>
             </TouchableOpacity>
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     color: "#FFFFFF",
-    // letterSpacing: 2, // Removido - pode não ser suportado
+    letterSpacing: 2,
     marginBottom: 8,
   },
   subtitle: {
