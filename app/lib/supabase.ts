@@ -1,15 +1,7 @@
-import { createClient } from '@supabase/supabase-js'
+import { getSupabase } from '../utils/supabase'
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-})
+// Lazy reference to the supabase client. Call getClient() when you need it.
+export const supabase = getSupabase()
 
 // Tipos para o banco de dados
 export interface User {
