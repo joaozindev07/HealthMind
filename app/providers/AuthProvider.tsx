@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { ClerkProvider, useAuth as useClerkAuth, useUser } from "@clerk/clerk-expo"
 import { tokenCache } from "@clerk/clerk-expo/token-cache"
+import Constants from 'expo-constants'
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 import { userService } from '../services/database'
 
@@ -72,10 +73,21 @@ const AuthProviderContent = ({ children }: { children: React.ReactNode }) => {
 }
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const publishkey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!
+  // Fallback chain for publishable key to support dev, expo start and EAS builds
+  const publishKey =
+    process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+    // expo config's extra (EAS/build-time)
+    (Constants.expoConfig?.extra as any)?.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+  // legacy manifest extra (older expo versions / dev)
+  ((Constants as any).manifest?.extra as any)?.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+    ''
+
+  if (!publishKey) {
+    console.warn('Clerk publishable key is missing. Set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in env or EAS secrets.')
+  }
 
   return (
-    <ClerkProvider tokenCache={tokenCache} publishableKey={publishkey}>
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishKey}>
       <AuthProviderContent>
         {children}
       </AuthProviderContent>
