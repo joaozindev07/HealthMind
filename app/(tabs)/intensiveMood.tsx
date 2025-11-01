@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
-  Animated,
   View,
   Text,
   TouchableOpacity,
@@ -10,6 +9,7 @@ import {
   Dimensions,
   StatusBar,
   Image,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -119,9 +119,6 @@ export default function IntensiveMoodScreen() {
   const [currentStreak, setCurrentStreak] = useState(3);
   const [totalXP, setTotalXP] = useState(225);
   const [selectedTab, setSelectedTab] = useState("challenges");
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const initialTop = height * 0.45;
   const completedChallenges = dailyChallenges.filter((c) => c.completed).length;
   const progressPercentage =
     (completedChallenges / dailyChallenges.length) * 100;
@@ -173,19 +170,37 @@ export default function IntensiveMoodScreen() {
         !item.unlocked && styles.lockedAchievement,
       ]}
     >
-      <View
-        style={[styles.achievementIcon, item.unlocked && styles.unlockedIcon]}
+      <LinearGradient
+        colors={item.unlocked ? ["#FEF3C7", "#FBBF24"] : ["#F3F4F6", "#E5E7EB"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.achievementGradient}
       >
-        <Ionicons
-          name={item.icon}
-          size={26}
-          color={item.unlocked ? "#FFC107" : "#9CA3AF"}
-        />
-      </View>
-      <View style={styles.achievementInfo}>
-        <Text style={styles.achievementTitle}>{item.title}</Text>
-        <Text style={styles.achievementDescription}>{item.description}</Text>
-      </View>
+        <View style={styles.achievementContent}>
+          <View
+            style={[styles.achievementIcon, item.unlocked && styles.unlockedIcon]}
+          >
+            <Ionicons
+              name={item.icon}
+              size={26}
+              color={item.unlocked ? "#92400E" : "#9CA3AF"}
+            />
+          </View>
+          <View style={styles.achievementInfo}> 
+            <Text style={[styles.achievementTitle, !item.unlocked && styles.lockedText]}>
+              {item.title}
+            </Text>
+            <Text style={[styles.achievementDescription, !item.unlocked && styles.lockedText]}>
+              {item.description}
+            </Text>
+          </View>
+          {item.unlocked && (
+            <View style={styles.achievementBadge}>
+              <Ionicons name="checkmark-circle" size={22} color="#10B981" />
+            </View>
+          )}
+        </View>
+      </LinearGradient>
     </View>
   );
 
@@ -246,30 +261,13 @@ export default function IntensiveMoodScreen() {
       </View>
 
       {/* Content */}
-      <Animated.View
+      <View
         style={[
           styles.contentContainer,
-          {
-            top: scrollY.interpolate({
-              inputRange: [0, 180],
-              outputRange: [initialTop, height * 0.2],
-              extrapolate: "clamp",
-            }),
-            height: scrollY.interpolate({
-              inputRange: [0, 180],
-              outputRange: [height - initialTop, height - height * 0.2],
-              extrapolate: "clamp",
-            }),
-          },
         ]}
       >
-        <Animated.ScrollView
+        <ScrollView
           showsVerticalScrollIndicator={false}
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
-          )}
         >
           <View style={styles.tabContainer}>
             <TouchableOpacity
@@ -313,11 +311,14 @@ export default function IntensiveMoodScreen() {
             : achievements.map((item) => renderAchievement({ item }))}
 
           {selectedTab === "achievements" && (
-            <View style={{ height: height * 0.4 }} /> 
+            <View style={styles.achievementsContainer}>
+              <Text style={styles.achievementsTitle}>Suas Conquistas</Text>
+              <Text style={styles.achievementsSubtitle}>Continue completando desafios para desbloquear mais!</Text>
+            </View>
           )}
           <View style={{ height: 40 }} />
-        </Animated.ScrollView>
-      </Animated.View>
+        </ScrollView>
+      </View>
     </LinearGradient>
   );
 }
@@ -392,9 +393,7 @@ const styles = StyleSheet.create({
   },
 
   contentContainer: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+    flex: 1,
     backgroundColor: "#FFF",
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
@@ -406,7 +405,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
     zIndex: 3,
-    marginTop: 70,
+    marginTop: 20,
   },
   tabContainer: {
     flexDirection: "row",
@@ -513,48 +512,90 @@ const styles = StyleSheet.create({
   },
 
   achievementCard: {
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  lockedAchievement: {
+    opacity: 0.7,
+  },
+  achievementGradient: {
+    borderRadius: 16,
+  },
+  achievementContent: {
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#FFF",
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
+  },
+  achievementIcon: {
+    width: 56,
+    height: 56,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
   },
-  lockedAchievement: {
-    opacity: 0.5,
-  },
-  achievementIcon: {
-    width: 56,
-    height: 56,
-    backgroundColor: "#F3F4F6",
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
   unlockedIcon: {
-    backgroundColor: "#FEF3C7",
+    backgroundColor: "rgba(255,255,255,0.9)",
   },
   achievementInfo: {
     flex: 1,
   },
   achievementTitle: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "700",
     color: "#374151",
+    marginBottom: 4,
   },
   achievementDescription: {
     fontSize: 14,
     color: "#6B7280",
+  },
+  lockedText: {
+    color: "#9CA3AF",
+  },
+  achievementBadge: {
+    marginLeft: 8,
+    backgroundColor: "rgba(255,255,255,0.8)",
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  achievementsContainer: {
+    marginTop: 10,
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  achievementsTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#374151",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  achievementsSubtitle: {
+    fontSize: 14,
+    color: "#6B7280",
+    textAlign: "center",
+    marginBottom: 16,
   },
 });
