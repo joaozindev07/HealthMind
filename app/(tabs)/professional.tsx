@@ -85,68 +85,72 @@ export default function ProfessionalSearchScreen() {
     });
   }, [searchText, selectedFilter]);
 
-  const renderProfessionalCard = ({ item }) => (
+  const renderProfessionalCard = ({ item }: { item: any }) => (
     <View style={styles.professionalCard}>
       <View style={styles.professionalHeader}>
         <View style={styles.professionalAvatar}>
           <Text style={styles.avatarText}>{getInitials(item.name)}</Text>
         </View>
         <View style={styles.professionalInfo}>
-          <Text style={styles.professionalName}>{item.name}</Text>
-          <Text style={styles.professionalSpecialty}>{item.specialty}</Text>
-          <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={16} color="#FFC107" />
-            <Text style={styles.ratingText}>{item.rating}</Text>
-            <Text style={styles.experienceText}>• {item.experience}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <View>
+              <Text style={styles.professionalName}>{item.name}</Text>
+              <View style={styles.verifiedRow}>
+                <Ionicons name="checkmark-circle" size={14} color="#10B981" />
+                <Text style={styles.verifiedText}>Verificado • {item.specialty}</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.favoriteButton} accessibilityLabel="Favoritar profissional">
+              <Ionicons name="heart-outline" size={18} color="#A259F7" />
+            </TouchableOpacity>
           </View>
-        </View>
-        <View style={styles.professionalActions}>
-          <Text style={styles.priceText}>{item.price}</Text>
-          <View
-            style={[
-              styles.statusBadge,
-              item.available ? styles.availableBadge : styles.unavailableBadge,
-            ]}
-          >
-            <Text
-              style={[
-                styles.statusText,
-                item.available ? styles.availableText : styles.unavailableText,
-              ]}
-            >
-              {item.available ? "Disponível" : "Ocupado"}
-            </Text>
+
+          <View style={styles.metaRow}>
+            <View style={styles.ratingBadge}>
+              <Ionicons name="star" size={12} color="#FFC107" />
+              <Text style={styles.ratingTextSmall}>{item.rating}</Text>
+            </View>
+            <Text style={styles.experienceText}>• {item.experience}</Text>
+            <View style={styles.priceBadge}>
+              <Text style={styles.priceBadgeText}>{item.price}</Text>
+            </View>
           </View>
         </View>
       </View>
 
-      <TouchableOpacity
-        style={[
-          styles.contactButtonWrapper,
-          !item.available && { opacity: 0.5 },
-        ]}
-        activeOpacity={item.available ? 0.8 : 1}
-        disabled={!item.available}
-        accessibilityLabel={
-          item.available ? "Agendar Consulta" : "Profissional Ocupado"
-        }
-      >
-        <LinearGradient
-          colors={["#A259F7", "#c85efd", "#be41fd"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.contactButton}
+      {/* Card footer: perfil + agendar */}
+      <View style={styles.cardFooter}>
+        <TouchableOpacity
+          style={styles.profileButton}
+          accessibilityLabel="Ver perfil"
+          onPress={() => {}}
         >
-          <Ionicons name="chatbubble-outline" size={18} color="#FFFFFF" />
-          <Text style={styles.contactButtonText}>
-            {item.available ? "Agendar Consulta" : "Indisponível"}
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
+          <Ionicons name="person-outline" size={16} color="#A259F7" style={{ marginRight: 8 }} />
+          <Text style={styles.profileButtonText}>Ver Perfil</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.scheduleButtonWrapper, !item.available && { opacity: 0.6 }]}
+          activeOpacity={item.available ? 0.85 : 1}
+          disabled={!item.available}
+          accessibilityLabel={item.available ? "Agendar consulta" : "Indisponível"}
+          onPress={() => {}}
+        >
+          <LinearGradient
+            colors={["#A259F7", "#c85efd", "#be41fd"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.scheduleButton}
+          >
+            <Ionicons name="calendar" size={16} color="#FFFFFF" style={{ marginRight: 8 }} />
+            <Text style={styles.scheduleButtonText}>{item.available ? "Agendar" : "Indisponível"}</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
-  const renderFilterChip = ({ item }) => (
+  const renderFilterChip = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={[
         styles.filterChip,
@@ -246,7 +250,6 @@ export default function ProfessionalSearchScreen() {
               {/* Results Header */}
               <View style={styles.resultsHeader}>
                 <Text style={styles.resultsTitle}>Profissionais Disponíveis</Text>
-                <Text style={styles.resultsCount}>{filteredProfessionals.length} encontrados</Text>
               </View>
             </>
           }
@@ -394,10 +397,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#374151",
   },
-  resultsCount: {
-    fontSize: 14,
-    color: "#6B7280",
-  },
 
   /* cards */
   professionalCard: {
@@ -516,5 +515,102 @@ const styles = StyleSheet.create({
 
   androidBottomSpacing: {
     height: 24,
+  },
+
+  /* Novos estilos para o cartão profissional */
+  verifiedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  verifiedText: {
+    fontSize: 12,
+    color: "#374151",
+    marginLeft: 4,
+  },
+  favoriteButton: {
+    padding: 8,
+  },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  ratingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F3F4F6",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 8,
+  },
+  ratingTextSmall: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#374151",
+    marginLeft: 4,
+  },
+  priceBadge: {
+    backgroundColor: "#A259F7",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginLeft: "auto",
+  },
+  priceBadgeText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  cardFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 16,
+  },
+  profileButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F3F4F6",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginRight: 8,
+    flex: 1,
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  profileButtonText: {
+    color: "#374151",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  scheduleButtonWrapper: {
+    borderRadius: 12,
+    shadowColor: "#A259F7",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    flex: 1,
+  },
+  scheduleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    height: 44,
+    paddingHorizontal: 16,
+  },
+  scheduleButtonText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });

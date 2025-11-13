@@ -79,13 +79,13 @@ export default function IntensiveCalendarScreen() {
   const currentMonth = monthNames[currentDate.getMonth()];
   const currentYear = currentDate.getFullYear();
 
-  const renderCalendarDay = (item, index) => {
+  const renderCalendarDay = (item: any, index: number) => {
     if (item.isEmpty) {
       return <View key={index} style={styles.emptyDay} />;
     }
 
-    let dayStyle = [styles.calendarDay];
-    let textStyle = [styles.dayText];
+    let dayStyle: any[] = [styles.calendarDay];
+    let textStyle: any[] = [styles.dayText];
     let iconName = null;
 
     if (item.isCompleted) {
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     borderColor: "#FFC107",
   },
   todayText: {
-    fontSize: 14,
+    fontSize:14,
     color: "#92400E",
     fontWeight: "600",
   },

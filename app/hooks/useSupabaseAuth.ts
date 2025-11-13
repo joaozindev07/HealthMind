@@ -9,6 +9,12 @@ export const useSupabaseAuth = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Se o cliente supabase não estiver inicializado, abortar
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     // Obter sessão inicial
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -39,11 +45,11 @@ export const useSupabaseAuth = () => {
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => subscription?.unsubscribe()
   }, [])
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase!.auth.signInWithPassword({
       email,
       password,
     })
@@ -51,7 +57,7 @@ export const useSupabaseAuth = () => {
   }
 
   const signUp = async (email: string, password: string, metadata?: any) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase!.auth.signUp({
       email,
       password,
       options: {
@@ -62,12 +68,12 @@ export const useSupabaseAuth = () => {
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await supabase!.auth.signOut()
     return { error }
   }
 
   const resetPassword = async (email: string) => {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email)
+    const { data, error } = await supabase!.auth.resetPasswordForEmail(email)
     return { data, error }
   }
 
@@ -81,3 +87,5 @@ export const useSupabaseAuth = () => {
     resetPassword,
   }
 }
+
+export default useSupabaseAuth

@@ -11,11 +11,11 @@ import {
   TextInput,
   Image,
   StyleSheet,
-  SafeAreaView,
   StatusBar,
   Dimensions,
   Platform,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import React from "react";
 
@@ -540,12 +540,12 @@ const styles = StyleSheet.create({
     // paddingRight será sobrescrito no componente
   },
   profileButton: {
-    marginTop: height * 0.01,
+    marginTop: height * 0.001,
   },
   profileIcon: {
-    width: width * 0.12,
-    height: width * 0.12,
-    borderRadius: width * 0.06,
+    width: width * 0.17,
+    height: width * 0.17,
+    borderRadius: width * 0.16,
     backgroundColor: "#F1F5F9",
     alignItems: "center",
     justifyContent: "center",
@@ -708,11 +708,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 20,
     marginRight: width * 0.04,
+    marginBottom: height * 0.01,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
-    elevation: 4,
+    elevation: 5,
     borderWidth: 1,
     borderColor: "#F1F5F9",
   },
@@ -786,6 +787,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 16,
     marginRight: width * 0.04,
+    marginBottom: height * 0.01,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,

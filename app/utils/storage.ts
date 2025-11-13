@@ -38,3 +38,10 @@ export const clearAllUserData = async (userId: string) => {
     console.error("Erro ao limpar dados do usuário:", error)
   }
 }
+
+export default {
+  saveUserData,
+  getUserData,
+  deleteUserData,
+  clearAllUserData,
+}

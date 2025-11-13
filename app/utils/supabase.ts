@@ -48,3 +48,5 @@ export function getSupabase() {
 export function clearSupabase() {
   _supabase = null
 }
+
+export default getSupabase

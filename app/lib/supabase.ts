@@ -67,3 +67,5 @@ export interface UserAchievement {
   unlocked_at: string
   created_at: string
 }
+
+export default supabase
