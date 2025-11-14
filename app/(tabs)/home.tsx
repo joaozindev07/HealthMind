@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
 // useFocusEffect não é necessário no Expo Router - usando useEffect
-import { getUserData } from "../utils/storage";
+import { getUserData, saveUserData } from "../utils/storage";
 import { useUser } from "@clerk/clerk-expo";
 import {
   View,
@@ -14,6 +14,7 @@ import {
   StatusBar,
   Dimensions,
   Platform,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -107,6 +108,49 @@ export default function HomePage() {
     fetchImage();
   }, [user]);
 
+  const handleSaveReflection = async () => {
+    if (!selectedMood && dailyNote.trim().length === 0) {
+      Alert.alert("Atenção", "Adicione uma reflexão ou selecione um humor.");
+      return;
+    }
+
+    const newReflection = {
+      id: Date.now().toString(),
+      mood: selectedMood,
+      note: dailyNote,
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      if (user && user.id) {
+        // salvar ligado ao usuário (usa seu util saveUserData)
+        const existing = await getUserData(user.id, "reflections");
+        const arr = existing ? JSON.parse(existing) : [];
+        arr.unshift(newReflection); // mais recente primeiro
+        await saveUserData(user.id, "reflections", JSON.stringify(arr));
+      } else {
+        // salvar local para usuário não logado
+        const local = await AsyncStorage.getItem("reflections_local");
+        const arr = local ? JSON.parse(local) : [];
+        arr.unshift(newReflection);
+        await AsyncStorage.setItem("reflections_local", JSON.stringify(arr));
+      }
+
+      // limpar — NÃO redirecionar mais automaticamente
+      setDailyNote("");
+      setSelectedMood(null);
+      // router.push removido — navegação para reflexões agora é feita somente pelo botão dedicado
+    } catch (e) {
+      console.error("Erro ao salvar reflexão:", e);
+      Alert.alert("Erro", "Não foi possível salvar a reflexão.");
+    }
+  };
+
+  // Navega para a tela de reflexões (botão dedicado)
+  const navigateToReflections = () => {
+    router.push("/(auth)/reflections");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
@@ -145,6 +189,7 @@ export default function HomePage() {
                   <Text style={styles.searchIcon}>🔍</Text>
                 </TouchableOpacity>
               </View>
+
             </View>
             <TouchableOpacity
               style={styles.profileButton}
@@ -176,6 +221,12 @@ export default function HomePage() {
           <Text style={styles.sectionTitle}>
             Como você está se sentindo hoje?
           </Text>
+          <TouchableOpacity
+                style={styles.reflectionsButton}
+                onPress={navigateToReflections}
+              >
+                <Text style={styles.reflectionsButtonText}>Minhas Reflexões</Text>
+              </TouchableOpacity>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -197,7 +248,7 @@ export default function HomePage() {
                     marginRight: width * 0.03,
                   },
                 ]}
-                onPress={() => setSelectedMood(mood.label)}
+                onPress={() => setSelectedMood(prev => (prev === mood.label ? null : mood.label))}
               >
                 <Text style={[styles.moodEmoji, { fontSize: width * 0.07 }]}>
                   {mood.emoji}
@@ -230,7 +281,7 @@ export default function HomePage() {
                 onChangeText={setDailyNote}
                 textAlignVertical="top"
               />
-              <TouchableOpacity style={styles.saveNoteButton}>
+              <TouchableOpacity style={styles.saveNoteButton} onPress={handleSaveReflection}>
                 <Text
                   style={[styles.saveNoteText, { fontSize: width * 0.045 }]}
                 >
@@ -411,40 +462,7 @@ export default function HomePage() {
             ))}
           </ScrollView>
         </View>
-
-        {/* Community Insights */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Histórias da comunidade</Text>
-          <View style={styles.testimonialsContainer}>
-            <View style={[styles.testimonialCard, { padding: width * 0.045 }]}>
-              <Text
-                style={[styles.testimonialText, { fontSize: width * 0.04 }]}
-              >
-                "Encontrei o apoio que precisava. Os profissionais são incríveis
-                e me ajudaram muito."
-              </Text>
-              <Text
-                style={[styles.testimonialAuthor, { fontSize: width * 0.035 }]}
-              >
-                - Maria, 28 anos
-              </Text>
-            </View>
-            <View style={[styles.testimonialCard, { padding: width * 0.045 }]}>
-              <Text
-                style={[styles.testimonialText, { fontSize: width * 0.04 }]}
-              >
-                "Os recursos de meditação mudaram minha rotina. Agora consigo
-                lidar melhor com a ansiedade."
-              </Text>
-              <Text
-                style={[styles.testimonialAuthor, { fontSize: width * 0.035 }]}
-              >
-                - João, 35 anos
-              </Text>
-            </View>
-          </View>
-        </View>
-
+        
         {/* Footer */}
         <View
           style={[
@@ -699,6 +717,27 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
+  // Botão Reflexões (novo)
+  reflectionsButton: {
+    marginVertical: height * 0.02,
+    alignSelf: "flex-start",
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    paddingVertical: height * 0.012,
+    paddingHorizontal: width * 0.04,
+    borderWidth: 1,
+    borderColor: "#E6E0FA",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  reflectionsButtonText: {
+    color: "#6B46C1",
+    fontWeight: "700",
+  },
+
   // Professionals
   professionalsScroll: {
     marginHorizontal: -width * 0.06,
@@ -818,25 +857,6 @@ const styles = StyleSheet.create({
   },
   resourceType: {
     color: "#6B7280",
-  },
-
-  // Testimonials
-  testimonialsContainer: {
-    gap: height * 0.02,
-  },
-  testimonialCard: {
-    backgroundColor: "#F1F5F9",
-    borderRadius: 16,
-  },
-  testimonialText: {
-    color: "#1F2937",
-    lineHeight: width * 0.055,
-    marginBottom: height * 0.015,
-    fontStyle: "italic",
-  },
-  testimonialAuthor: {
-    color: "#6B7280",
-    fontWeight: "500",
   },
 
   // Footer
