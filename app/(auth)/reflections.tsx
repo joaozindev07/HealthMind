@@ -23,7 +23,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("window");
 const STATUSBAR_HEIGHT =
-  Platform.OS === "android" ? StatusBar.currentHeight ?? 24 : 0;
+  Platform.OS === "android" ? StatusBar.currentHeight ?? 20 : 0;
 
 const PRIMARY = "#A259F7";
 const ACCENT = "#6B46C1";
@@ -234,7 +234,7 @@ export default function ReflectionsPage() {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <View
-          style={[styles.headerWrap, { paddingTop: STATUSBAR_HEIGHT + 12 }]}
+          style={[styles.headerWrap, { paddingTop: STATUSBAR_HEIGHT - 20 }]}
         >
           <LinearGradient
             colors={[PRIMARY, ACCENT]}
@@ -261,7 +261,7 @@ export default function ReflectionsPage() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <View style={[styles.headerWrap, { paddingTop: STATUSBAR_HEIGHT + 12 }]}>
+      <View style={[styles.headerWrap, { paddingTop: STATUSBAR_HEIGHT - 20 }]}>
         <LinearGradient
           colors={[PRIMARY, ACCENT]}
           style={styles.headerGradient}

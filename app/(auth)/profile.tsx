@@ -366,8 +366,12 @@ export default function ProfilePage() {
             <TouchableOpacity
               style={styles.logoutButton}
               onPress={async () => {
-                await signOut();
-                router.replace("/login");
+                try {
+                  await signOut();
+                  router.replace("/login");
+                } catch (err) {
+                  console.log(err);
+                }
               }}
             >
               <Ionicons name="log-out-outline" size={20} color="#EF4444" />

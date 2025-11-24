@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";

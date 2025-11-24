@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
-// useFocusEffect não é necessário no Expo Router - usando useEffect
 import { getUserData, saveUserData } from "../utils/storage";
 import { useUser } from "@clerk/clerk-expo";
 import {
@@ -175,20 +174,6 @@ export default function HomePage() {
                 Conecte-se com profissionais e recursos para cuidar da sua saúde
                 mental
               </Text>
-
-              {/* Search Bar */}
-              <View style={[styles.searchContainer]}>
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="Buscar recursos..."
-                  placeholderTextColor="#6B7280"
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                />
-                <TouchableOpacity style={styles.searchButton}>
-                  <Text style={styles.searchIcon}>🔍</Text>
-                </TouchableOpacity>
-              </View>
 
             </View>
             <TouchableOpacity
@@ -585,31 +570,8 @@ const styles = StyleSheet.create({
     fontSize: width * 0.045,
     color: "#6B7280",
     lineHeight: width * 0.06,
-    marginBottom: height * 0.04,
+    marginBottom: height * 0.01,
     marginRight: -55,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    marginRight: -45,
-    backgroundColor: "#F1F5F9",
-    borderRadius: 16,
-    paddingHorizontal: width * 0.04,
-    paddingVertical: height * 0.005,
-    alignItems: "center",
-    borderWidth: 1,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: width * 0.045,
-    color: "#1F2937",
-    paddingVertical: height * 0.015,
-    width: "100%",
-  },
-  searchButton: {
-    padding: width * 0.02,
-  },
-  searchIcon: {
-    fontSize: width * 0.045,
   },
   heroIllustration: {
     position: "absolute",
