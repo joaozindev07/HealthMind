@@ -21,10 +21,49 @@ import { useAuth, useUser } from "@clerk/clerk-expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { getUserData, saveUserData } from "../utils/storage";
+import * as Notifications from "expo-notifications";
 
 const { width, height } = Dimensions.get("window");
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? StatusBar.currentHeight ?? 24 : 0;
+
+// Handler para mostrar notificações enquanto o app está em primeiro plano
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+// Solicita permissão para notificações (local)
+const registerForNotifications = async (): Promise<boolean> => {
+  try {
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== "granted") {
+      const { status: newStatus } = await Notifications.requestPermissionsAsync();
+      return newStatus === "granted";
+    }
+    return true;
+  } catch (e) {
+    console.error("Erro ao solicitar permissão de notificações:", e);
+    return false;
+  }
+};
+
+// Envia notificação local imediata
+const sendNotification = async (title: string, body: string) => {
+  try {
+    await Notifications.scheduleNotificationAsync({
+      content: { title, body, data: { source: "profile" } },
+      trigger: null,
+    });
+  } catch (e) {
+    console.error("Erro ao enviar notificação:", e);
+  }
+};
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -32,8 +71,8 @@ export default function ProfilePage() {
   const { user } = useUser();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-  const [name, setName] = useState("Maria Silva");
-  const [email, setEmail] = useState("maria@email.com");
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
@@ -45,7 +84,7 @@ export default function ProfilePage() {
         const userId = user.id;
 
         let savedName = await getUserData(userId, "name");
-        let savedEmail = await getUserData(userId, "email");
+        let savedNickname = await getUserData(userId, "nickname");
         const savedNotifications = await getUserData(userId, "notifications");
         const savedDarkMode = await getUserData(userId, "darkmode");
         let savedImage = await getUserData(userId, "image");
@@ -54,17 +93,13 @@ export default function ProfilePage() {
           savedName = user.fullName;
         }
 
-        if (!savedEmail && user?.primaryEmailAddress?.emailAddress) {
-          savedEmail = user.primaryEmailAddress.emailAddress;
-        }
-
         if (!savedImage && user?.imageUrl) {
           savedImage = user.imageUrl;
           await saveUserData(userId, "image", savedImage);
         }
 
         if (savedName) setName(savedName);
-        if (savedEmail) setEmail(savedEmail);
+        if (savedNickname) setNickname(savedNickname);
         if (savedNotifications)
           setNotificationsEnabled(savedNotifications === "true");
         if (savedDarkMode) setDarkModeEnabled(savedDarkMode === "true");
@@ -77,19 +112,51 @@ export default function ProfilePage() {
     loadProfile();
   }, [user]);
 
+  // garante permissão quando usuário ativa notificações
+  useEffect(() => {
+    if (notificationsEnabled) {
+      registerForNotifications().then((granted) => {
+        if (!granted) {
+          // desativa se não foi concedida
+          setNotificationsEnabled(false);
+        }
+      });
+    }
+  }, [notificationsEnabled]);
+
+  // Gera iniciais a partir do apelido > nome > fullName. Retorna "U" se vazio.
+  const getInitials = (text?: string) => {
+    if (!text) return "U";
+    const parts = text.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  };
+  const initials = getInitials((nickname || name || user?.fullName) ?? undefined);
+
   const handleSave = async () => {
     if (!user) return;
 
     setLoading(true);
     try {
       await saveUserData(user.id, "name", name);
-      await saveUserData(user.id, "email", email);
+      await saveUserData(user.id, "nickname", nickname);
       await saveUserData(
         user.id,
         "notifications",
         notificationsEnabled.toString()
       );
       await saveUserData(user.id, "darkmode", darkModeEnabled.toString());
+
+      // se notificações estiverem ativas, garante permissão e envia notificação teste
+      if (notificationsEnabled) {
+        const granted = await registerForNotifications();
+        if (granted) {
+          await sendNotification(
+            "Notificações Ativadas",
+            "Você receberá lembretes e atualizações."
+          );
+        }
+      }
 
       setTimeout(() => {
         setLoading(false);
@@ -168,7 +235,7 @@ export default function ProfilePage() {
                       style={{ width: 80, height: 80, borderRadius: 40 }}
                     />
                   ) : (
-                    <Text style={styles.avatarText}>MS</Text>
+                    <Text style={styles.avatarText}>{initials}</Text>
                   )}
                 </LinearGradient>
                 <TouchableOpacity
@@ -179,8 +246,7 @@ export default function ProfilePage() {
                 </TouchableOpacity>
               </View>
               <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>{name}</Text>
-                <Text style={styles.profileEmail}>{email}</Text>
+                <Text style={styles.profileName}>{nickname || "Usuário"}</Text>
                 <View style={styles.membershipBadge}>
                   <Ionicons name="star" size={14} color="#FFD700" />
                   <Text style={styles.profileJoined}>Membro Premium</Text>
@@ -215,20 +281,19 @@ export default function ProfilePage() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Email</Text>
+              <Text style={styles.inputLabel}>Apelido</Text>
               <View style={styles.inputContainer}>
                 <Ionicons
-                  name="mail"
+                  name="pricetag"
                   size={20}
                   color="#A259F7"
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={styles.input}
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="seu@email.com"
-                  keyboardType="email-address"
+                  value={nickname}
+                  onChangeText={setNickname}
+                  placeholder="Seu apelido"
                 />
               </View>
             </View>
@@ -340,26 +405,33 @@ export default function ProfilePage() {
           {/* Actions */}
           <View style={styles.section}>
             <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleSave}
-              disabled={loading}
+              style={[styles.saveButton, { marginBottom: 12 }]}
+              onPress={async () => {
+                if (!notificationsEnabled) {
+                  Alert.alert(
+                    "Notificações desativadas",
+                    "Ative as notificações nas preferências para testar."
+                  );
+                  return;
+                }
+                const granted = await registerForNotifications();
+                if (!granted) {
+                  Alert.alert(
+                    "Permissão negada",
+                    "Não foi possível obter permissão para notificações."
+                  );
+                  return;
+                }
+                await sendNotification("Notificação de teste", "Esta é uma notificação de teste enviada do perfil.");
+                Alert.alert("Enviada", "Notificação de teste enviada com sucesso.");
+              }}
             >
               <LinearGradient
-                colors={["#A259F7", "#c85efd"]}
+                colors={["#FFD54F", "#FFA726"]}
                 style={styles.saveButtonGradient}
               >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <>
-                    <Ionicons
-                      name="checkmark-circle"
-                      size={20}
-                      color="#ffffff"
-                    />
-                    <Text style={styles.saveButtonText}>Salvar Alterações</Text>
-                  </>
-                )}
+                <Ionicons name="send" size={20} color="#ffffff" />
+                <Text style={styles.saveButtonText}>Enviar notificação teste</Text>
               </LinearGradient>
             </TouchableOpacity>
 
@@ -461,9 +533,9 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 60,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#A259F7",
@@ -471,6 +543,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+    borderColor: "#A259F7"
   },
   avatarText: {
     fontSize: 28,
