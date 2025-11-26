@@ -6,6 +6,8 @@ export default function AuthLayout() {
             <Stack.Screen name="intensiveCalendarScreen" options={{ headerShown: false }} />
             <Stack.Screen name="profile" options={{ headerShown: false }} />
             <Stack.Screen name="reflections" options={{ headerShown: false }} />
+            <Stack.Screen name="myData" options={{ headerShown: false }} />
+            <Stack.Screen name="settings" options={{ headerShown: false }} />
         </Stack>
     )
 }

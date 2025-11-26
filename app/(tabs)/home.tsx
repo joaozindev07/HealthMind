@@ -14,6 +14,7 @@ import {
   Dimensions,
   Platform,
   Alert,
+  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -149,6 +150,33 @@ export default function HomePage() {
   const navigateToReflections = () => {
     router.push("/(auth)/reflections");
   };
+
+  const confirmCall = () => {
+    Alert.alert(
+      "Confirmação",
+      "Deseja fazer uma chamada para o suporte 24h?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Confirmar",
+          onPress: () => callNumber("188"),
+        },
+      ]
+    );
+  };
+
+  const callNumber = async (Number: any) => {
+    const phoneNumber = `tel:${Number}`;
+    try {
+      await Linking.openURL(phoneNumber);
+    } catch (error) {
+      console.error("Erro ao fazer chamada:", error);
+      Alert.alert("Erro", "Não foi possível fazer a chamada.");
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -466,6 +494,7 @@ export default function HomePage() {
                 paddingHorizontal: width * 0.13,
               },
             ]}
+            onPress={() => confirmCall()}
           >
             <Text
               style={[styles.emergencyButtonText, { fontSize: width * 0.04 }]}

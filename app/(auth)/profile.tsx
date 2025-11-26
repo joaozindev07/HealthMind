@@ -13,6 +13,8 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  Animated,
+  Easing,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -75,6 +77,44 @@ export default function ProfilePage() {
   const [nickname, setNickname] = useState("");
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const successOpacity = useState(new Animated.Value(0))[0];
+  const successTranslate = useState(new Animated.Value(20))[0];
+
+  const showSuccessToast = (title: string, description?: string) => {
+    setShowSuccess(true);
+    Animated.parallel([
+      Animated.timing(successOpacity, {
+        toValue: 1,
+        duration: 250,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(successTranslate, {
+        toValue: 0,
+        duration: 250,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setTimeout(() => {
+        Animated.parallel([
+          Animated.timing(successOpacity, {
+            toValue: 0,
+            duration: 250,
+            easing: Easing.in(Easing.quad),
+            useNativeDriver: true,
+          }),
+          Animated.timing(successTranslate, {
+            toValue: 20,
+            duration: 250,
+            easing: Easing.in(Easing.quad),
+            useNativeDriver: true,
+          }),
+        ]).start(() => setShowSuccess(false));
+      }, 2200);
+    });
+  };
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -140,27 +180,10 @@ export default function ProfilePage() {
     try {
       await saveUserData(user.id, "name", name);
       await saveUserData(user.id, "nickname", nickname);
-      await saveUserData(
-        user.id,
-        "notifications",
-        notificationsEnabled.toString()
-      );
-      await saveUserData(user.id, "darkmode", darkModeEnabled.toString());
-
-      // se notificações estiverem ativas, garante permissão e envia notificação teste
-      if (notificationsEnabled) {
-        const granted = await registerForNotifications();
-        if (granted) {
-          await sendNotification(
-            "Notificações Ativadas",
-            "Você receberá lembretes e atualizações."
-          );
-        }
-      }
 
       setTimeout(() => {
         setLoading(false);
-        Alert.alert("Sucesso", "Informações salvas localmente!");
+        showSuccessToast("Informações salvas!", "Seus dados foram atualizados.");
       }, 800);
     } catch (e) {
       setLoading(false);
@@ -204,7 +227,7 @@ export default function ProfilePage() {
           <Ionicons name="arrow-back" size={24} color="#ffffff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Meu Perfil</Text>
-        <TouchableOpacity style={styles.settingsButton}>
+        <TouchableOpacity style={styles.settingsButton} onPress={() => router.push("/settings")}>
           <Ionicons name="settings-outline" size={24} color="#ffffff" />
         </TouchableOpacity>
       </View>
@@ -361,20 +384,8 @@ export default function ProfilePage() {
             </Text>
 
             <View style={styles.menuCard}>
-              <TouchableOpacity style={styles.menuItem}>
-                <View style={styles.menuIconContainer}>
-                  <Ionicons name="lock-closed" size={20} color="#A259F7" />
-                </View>
-                <View style={styles.menuInfo}>
-                  <Text style={styles.menuTitle}>Privacidade e Segurança</Text>
-                  <Text style={styles.menuDescription}>
-                    Gerencie suas configurações de privacidade
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.menuItem}>
+              
+              <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/myData")}>
                 <View style={styles.menuIconContainer}>
                   <Ionicons name="bar-chart" size={20} color="#A259F7" />
                 </View>
@@ -406,32 +417,13 @@ export default function ProfilePage() {
           <View style={styles.section}>
             <TouchableOpacity
               style={[styles.saveButton, { marginBottom: 12 }]}
-              onPress={async () => {
-                if (!notificationsEnabled) {
-                  Alert.alert(
-                    "Notificações desativadas",
-                    "Ative as notificações nas preferências para testar."
-                  );
-                  return;
-                }
-                const granted = await registerForNotifications();
-                if (!granted) {
-                  Alert.alert(
-                    "Permissão negada",
-                    "Não foi possível obter permissão para notificações."
-                  );
-                  return;
-                }
-                await sendNotification("Notificação de teste", "Esta é uma notificação de teste enviada do perfil.");
-                Alert.alert("Enviada", "Notificação de teste enviada com sucesso.");
-              }}
+              onPress={handleSave}
             >
               <LinearGradient
-                colors={["#FFD54F", "#FFA726"]}
+                colors={["#A259F7", "#c856f7"]}
                 style={styles.saveButtonGradient}
               >
-                <Ionicons name="send" size={20} color="#ffffff" />
-                <Text style={styles.saveButtonText}>Enviar notificação teste</Text>
+                <Text style={styles.saveButtonText}>salvar</Text>
               </LinearGradient>
             </TouchableOpacity>
 
@@ -452,6 +444,37 @@ export default function ProfilePage() {
           </View>
         </LinearGradient>
       </ScrollView>
+
+      {showSuccess && (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.successToastContainer,
+            {
+              opacity: successOpacity,
+              transform: [{ translateY: successTranslate }],
+            },
+          ]}
+        >
+          <LinearGradient
+            colors={["#34D399", "#10B981"]}
+            style={styles.successToastGradient}
+          >
+            <Ionicons
+              name="checkmark-circle"
+              size={24}
+              color="#ffffff"
+              style={styles.successToastIcon}
+            />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.successToastTitle}>Informações salvas!</Text>
+              <Text style={styles.successToastDescription}>
+                Seus dados foram atualizados.
+              </Text>
+            </View>
+          </LinearGradient>
+        </Animated.View>
+      )}
     </LinearGradient>
   );
 }
@@ -736,9 +759,9 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
+    fontSize: 18,
+    fontWeight: "700",
+    marginLeft: 7,
   },
   logoutButton: {
     backgroundColor: "#ffffff",
@@ -760,5 +783,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
+  },
+  successToastContainer: {
+    position: "absolute",
+    left: width * 0.06,
+    right: width * 0.06,
+    bottom: 24,
+  },
+  successToastGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  successToastIcon: {
+    marginRight: 12,
+  },
+  successToastTitle: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  successToastDescription: {
+    color: "#ECFDF5",
+    fontSize: 13,
+    marginTop: 2,
   },
 });
