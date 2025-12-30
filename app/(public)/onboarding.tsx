@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import colors from '../theme/colors';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 
@@ -73,12 +74,12 @@ export default function OnboardingScreen() {
 
   return (
     <LinearGradient
-      colors={["#A259F7", "#c85efd", "#be41fd"]}
+      colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#A259F7" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
 
       <View style={styles.headerContainer}>
         <View style={styles.logoContainer}>
@@ -92,7 +93,7 @@ export default function OnboardingScreen() {
       </View>
 
       <LinearGradient
-        colors={["rgba(255, 255, 255, 0.98)", "rgba(255, 255, 255, 0.92)"]}
+        colors={[colors.white98, colors.white92]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.formContainer}
@@ -100,8 +101,8 @@ export default function OnboardingScreen() {
         {/* Progress Indicator */}
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
-            <LinearGradient
-              colors={["#A259F7", "#c85efd"]}
+              <LinearGradient
+                colors={[colors.primary, colors.primaryLight]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[
@@ -164,7 +165,7 @@ export default function OnboardingScreen() {
                 activeOpacity={0.8}
               >
                 <LinearGradient
-                  colors={["#A259F7", "#c85efd", "#be41fd"]}
+                  colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.optionButton}
@@ -174,14 +175,14 @@ export default function OnboardingScreen() {
                       <Ionicons
                         name={option.icon as any}
                         size={24}
-                        color="#FFFFFF"
+                        color={colors.white}
                       />
                     </View>
                     <Text style={styles.optionText}>{option.label}</Text>
                     <Ionicons
                       name="chevron-forward"
                       size={20}
-                      color="rgba(255,255,255,0.7)"
+                      color={colors.white70}
                     />
                   </View>
                 </LinearGradient>
@@ -208,18 +209,18 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.white,
     letterSpacing: 2,
     marginBottom: 8,
   },
-  welcomeText: { fontSize: 16, color: "rgba(255,255,255,0.8)" },
+  welcomeText: { fontSize: 16, color: colors.white8 },
   formContainer: {
     flex: 0.65,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     paddingHorizontal: 32,
     paddingTop: 32,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -228,15 +229,15 @@ const styles = StyleSheet.create({
   progressContainer: { marginBottom: 32 },
   progressBar: {
     height: 6,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
     borderRadius: 3,
     marginBottom: 8,
     overflow: "hidden",
   },
   progressFill: { height: "100%", borderRadius: 3 },
-  progressText: {
+    progressText: {
     textAlign: "center",
-    color: "#6B7280",
+    color: colors.gray,
     fontSize: 14,
     fontWeight: "500",
   },
@@ -247,31 +248,31 @@ const styles = StyleSheet.create({
   questionTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#374151",
+    color: colors.textSecondary,
     textAlign: "center",
     marginBottom: 8,
   },
   questionSubtitle: {
     fontSize: 16,
-    color: "#6B7280",
+    color: colors.gray,
     textAlign: "center",
     lineHeight: 22,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#A259F7",
+    borderColor: colors.primary,
     borderRadius: 12,
     padding: 12,
     fontSize: 18,
     marginBottom: 16,
-    backgroundColor: "#fff",
-    color: "#374151",
+    backgroundColor: colors.white,
+    color: colors.textSecondary,
   },
   optionsContainer: { flex: 1 },
   optionButtonWrapper: {
     borderRadius: 16,
     marginBottom: 16,
-    shadowColor: "#A259F7",
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -293,28 +294,28 @@ const styles = StyleSheet.create({
   optionIconContainer: {
     width: 40,
     height: 40,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: colors.white20,
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },
   optionText: {
     flex: 1,
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
     marginHorizontal: 16,
   },
   nextButton: {
-    backgroundColor: "#A259F7",
+    backgroundColor: colors.primary,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",
     marginTop: 8,
   },
   nextButtonText: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 18,
     fontWeight: "bold",
   },

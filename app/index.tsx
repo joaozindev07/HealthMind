@@ -1,10 +1,11 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import colors from './theme/colors';
 
 export default function index() {
     return (
         <LinearGradient
-            colors={['#be41fdff', '#FDDCD0', '#ff58eebd']}
+            colors={[colors.primaryDark, colors.accent, colors.pinkAccent]}
             style={styles.container}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}>
@@ -20,13 +21,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#49026E",
+        backgroundColor: colors.primaryAlt,
     },
     title: {
         fontSize: 40,
         fontWeight: "bold",
         marginTop: 50,
-        color: "#fff",
+        color: colors.white,
     },
     image: {
         width: 250,

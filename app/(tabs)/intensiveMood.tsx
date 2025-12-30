@@ -12,6 +12,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { Styles } from "./styles/intensiveMoodCss";
+import colors from "../theme/colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -135,53 +137,53 @@ export default function IntensiveMoodScreen() {
     <TouchableOpacity
       key={item.id}
       style={[
-        styles.challengeCard,
-        item.completed && styles.completedCard,
-        item.current && styles.currentCard,
+        Styles.challengeCard,
+        item.completed && Styles.completedCard,
+        item.current && Styles.currentCard,
       ]}
       activeOpacity={0.9}
       accessibilityLabel={`Desafio ${item.title}`}
     >
-      <View style={styles.challengeHeader}>
+      <View style={Styles.challengeHeader}>
         <View
           style={[
-            styles.challengeIconContainer,
-            item.completed && styles.completedIconContainer,
+            Styles.challengeIconContainer,
+            item.completed && Styles.completedIconContainer,
           ]}
         >
-          <Ionicons
+            <Ionicons
             name={item.completed ? "checkmark" : item.icon}
             size={26}
-            color={item.completed ? "#FFFFFF" : "#A259F7"}
+            color={item.completed ? colors.white : colors.primary}
           />
         </View>
 
-        <View style={styles.challengeInfo}>
-          <View style={styles.challengeTitleRow}>
-            <Text style={styles.challengeTitle}>{item.title}</Text>
-            <View style={styles.xpBadge}>
-              <Ionicons name="sparkles" size={12} color="#92400E" />
-              <Text style={styles.xpText}>{item.xp} XP</Text>
+        <View style={Styles.challengeInfo}>
+          <View style={Styles.challengeTitleRow}>
+            <Text style={Styles.challengeTitle}>{item.title}</Text>
+            <View style={Styles.xpBadge}>
+              <Ionicons name="sparkles" size={12} color={colors.warning} />
+              <Text style={Styles.xpText}>{item.xp} XP</Text>
             </View>
           </View>
 
-          <Text style={styles.challengeDescription}>{item.description}</Text>
+          <Text style={Styles.challengeDescription}>{item.description}</Text>
 
-          <View style={styles.cardMetaRow}>
-            <View style={[styles.difficultyPill, item.difficulty === "Difícil" && styles.difficultyHard]}>
-              <Text style={styles.difficultyText}>{item.difficulty}</Text>
+          <View style={Styles.cardMetaRow}>
+            <View style={[Styles.difficultyPill, item.difficulty === "Difícil" && Styles.difficultyHard]}>
+              <Text style={Styles.difficultyText}>{item.difficulty}</Text>
             </View>
-            {item.completed && <Text style={styles.completedPill}>Concluído</Text>}
-            {item.current && <Text style={styles.currentPill}>Atual</Text>}
+            {item.completed && <Text style={Styles.completedPill}>Concluído</Text>}
+            {item.current && <Text style={Styles.currentPill}>Atual</Text>}
           </View>
         </View>
       </View>
 
-      <View style={styles.challengeFooter}>
+      <View style={Styles.challengeFooter}>
         {/* botão removido para items concluídos */}
         {!item.completed && (
           <TouchableOpacity
-            style={item.current ? styles.startButton : styles.startButton}
+            style={item.current ? Styles.startButton : Styles.startButton}
             accessibilityLabel={item.current ? "Começar desafio" : "Ver detalhes"}
             onPress={() => {
               // roteamento / ação aqui
@@ -193,7 +195,7 @@ export default function IntensiveMoodScreen() {
               color={"#FFF"}
               style={{ marginRight: 8 }}
             />
-            <Text style={styles.startButtonText}>
+            <Text style={Styles.startButtonText}>
               {item.current ? "Começar" : "Detalhes"}
             </Text>
           </TouchableOpacity>
@@ -206,37 +208,37 @@ export default function IntensiveMoodScreen() {
     <View
       key={item.id}
       style={[
-        styles.achievementCard,
-        !item.unlocked && styles.lockedAchievement,
+        Styles.achievementCard,
+        !item.unlocked && Styles.lockedAchievement,
       ]}
     >
       <LinearGradient
         colors={item.unlocked ? ["#FEF3C7", "#FBBF24"] : ["#F3F4F6", "#E5E7EB"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.achievementGradient}
+        style={Styles.achievementGradient}
       >
-        <View style={styles.achievementContent}>
+        <View style={Styles.achievementContent}>
           <View
-            style={[styles.achievementIcon, item.unlocked && styles.unlockedIcon]}
+            style={[Styles.achievementIcon, item.unlocked && Styles.unlockedIcon]}
           >
             <Ionicons
               name={item.icon}
               size={26}
-              color={item.unlocked ? "#92400E" : "#9CA3AF"}
+              color={item.unlocked ? colors.warning : colors.muted}
             />
           </View>
-          <View style={styles.achievementInfo}>
-            <Text style={[styles.achievementTitle, !item.unlocked && styles.lockedText]}>
+          <View style={Styles.achievementInfo}>
+            <Text style={[Styles.achievementTitle, !item.unlocked && Styles.lockedText]}>
               {item.title}
             </Text>
-            <Text style={[styles.achievementDescription, !item.unlocked && styles.lockedText]}>
+            <Text style={[Styles.achievementDescription, !item.unlocked && Styles.lockedText]}>
               {item.description}
             </Text>
           </View>
-          {item.unlocked && (
-            <View style={styles.achievementBadge}>
-              <Ionicons name="checkmark-circle" size={22} color="#10B981" />
+            {item.unlocked && (
+            <View style={Styles.achievementBadge}>
+              <Ionicons name="checkmark-circle" size={22} color={colors.success} />
             </View>
           )}
         </View>
@@ -246,111 +248,111 @@ export default function IntensiveMoodScreen() {
 
   return (
     <LinearGradient
-      colors={["#A259F7", "#c85efd", "#be41fd"]}
+      colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.container}
+      style={Styles.container}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
 
       {/* Header */}
-      <View style={styles.headerContainer}>
-        <Image source={require("../../assets/images/icon.png")} style={styles.imageLogo} />
-        <View style={styles.headerTopRow}>
+      <View style={Styles.headerContainer}>
+        <Image source={require("../../assets/images/icon.png")} style={Styles.imageLogo} />
+        <View style={Styles.headerTopRow}>
           <View>
-            <Text style={styles.appTitle}>Intensivo Dias Felizes</Text>
-            <Text style={styles.subtitle}>7 dias para transformar seu humor</Text>
+            <Text style={Styles.appTitle}>Intensivo Dias Felizes</Text>
+            <Text style={Styles.subtitle}>7 dias para transformar seu humor</Text>
           </View>
           {/* removed inline header actions to avoid shifting the title */}
         </View>
 
         {/* moved header action buttons to absolute/top so they don't push the title */}
-        <View style={styles.headerActionsAbsolute}>
-          <TouchableOpacity style={styles.iconButton} accessibilityLabel="Compartilhar">
-            <Ionicons name="share-social-outline" size={18} color="#FFF" />
+        <View style={Styles.headerActionsAbsolute}>
+            <TouchableOpacity style={Styles.iconButton} accessibilityLabel="Compartilhar">
+            <Ionicons name="share-social-outline" size={18} color={colors.white} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} accessibilityLabel="Ajuda">
-            <Ionicons name="help-circle-outline" size={18} color="#FFF" />
+          <TouchableOpacity style={Styles.iconButton} accessibilityLabel="Ajuda">
+            <Ionicons name="help-circle-outline" size={18} color={colors.white} />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Ionicons name="flame" size={20} color="#FFC107" />
-            <Text style={styles.statNumber}>{currentStreak}</Text>
-            <Text style={styles.statLabel}>Sequência</Text>
+        <View style={Styles.statsContainer}>
+          <View style={Styles.statItem}>
+            <Ionicons name="flame" size={20} color={colors.warning} />
+            <Text style={Styles.statNumber}>{currentStreak}</Text>
+            <Text style={Styles.statLabel}>Sequência</Text>
           </View>
 
-          <View style={styles.statItem}>
-            <Ionicons name="star" size={20} color="#FFC107" />
-            <Text style={styles.statNumber}>{totalXP}</Text>
-            <Text style={styles.statLabel}>XP Total</Text>
+          <View style={Styles.statItem}>
+            <Ionicons name="star" size={20} color={colors.warning} />
+            <Text style={Styles.statNumber}>{totalXP}</Text>
+            <Text style={Styles.statLabel}>XP Total</Text>
           </View>
 
-          <View style={styles.statItem}>
-            <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-            <Text style={styles.statNumber}>{completedChallenges}/7</Text>
-            <Text style={styles.statLabel}>Completos</Text>
+          <View style={Styles.statItem}>
+            <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+            <Text style={Styles.statNumber}>{completedChallenges}/7</Text>
+            <Text style={Styles.statLabel}>Completos</Text>
           </View>
         </View>
 
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
+        <View style={Styles.progressContainer}>
+          <View style={Styles.progressBar}>
             <LinearGradient
-              colors={["#10B981", "#34D399"]}
+              colors={[colors.success, colors.success]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              style={[styles.progressFill, { width: `${progressPercentage}%` }]}
+              style={[Styles.progressFill, { width: `${progressPercentage}%` }]}
             />
           </View>
-          <Text style={styles.progressText}>{Math.round(progressPercentage)}% completo</Text>
+          <Text style={Styles.progressText}>{Math.round(progressPercentage)}% completo</Text>
         </View>
       </View>
 
       {/* Content */}
-      <View style={styles.contentContainer}>
+      <View style={Styles.contentContainer}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.tabContainer}>
+          <View style={Styles.tabContainer}>
             <TouchableOpacity
-              style={[styles.tab, selectedTab === "challenges" && styles.activeTab]}
+              style={[Styles.tab, selectedTab === "challenges" && Styles.activeTab]}
               onPress={() => setSelectedTab("challenges")}
             >
-              <Text style={styles.tabText}>Desafios</Text>
+              <Text style={Styles.tabText}>Desafios</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.tab, selectedTab === "achievements" && styles.activeTab]}
+              style={[Styles.tab, selectedTab === "achievements" && Styles.activeTab]}
               onPress={() => setSelectedTab("achievements")}
             >
-              <Text style={styles.tabText}>Conquistas</Text>
+              <Text style={Styles.tabText}>Conquistas</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={styles.quickControls}>
+          <View style={Styles.quickControls}>
             <TouchableOpacity
-              style={[styles.controlButton, onlyCurrent && styles.controlButtonActive]}
+              style={[Styles.controlButton, onlyCurrent && Styles.controlButtonActive]}
               onPress={() => setOnlyCurrent((v) => !v)}
             >
-              <Ionicons name="time-outline" size={14} color={onlyCurrent ? "#FFF" : "#A259F7"} />
-              <Text style={[styles.controlText, onlyCurrent && styles.controlTextActive]}>Só atual</Text>
+              <Ionicons name="time-outline" size={14} color={onlyCurrent ? colors.white : colors.primary} />
+              <Text style={[Styles.controlText, onlyCurrent && Styles.controlTextActive]}>Só atual</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.controlButton, !showCompleted && styles.controlButtonActive]}
+              style={[Styles.controlButton, !showCompleted && Styles.controlButtonActive]}
               onPress={() => setShowCompleted((v) => !v)}
             >
-              <Ionicons name="checkmark-done-outline" size={14} color={!showCompleted ? "#FFF" : "#A259F7"} />
-              <Text style={[styles.controlText, !showCompleted && styles.controlTextActive]}>Ocultar completos</Text>
+              <Ionicons name="checkmark-done-outline" size={14} color={!showCompleted ? colors.white : colors.primary} />
+              <Text style={[Styles.controlText, !showCompleted && Styles.controlTextActive]}>Ocultar completos</Text>
             </TouchableOpacity>
           </View>
 
           {/* calendário separado, centralizado e abaixo dos controles */}
-          <View style={styles.calendarWrapper}>
+          <View style={Styles.calendarWrapper}>
             <TouchableOpacity
-              style={styles.calendarCTA}
+              style={Styles.calendarCTA}
               onPress={() => router.push('/intensiveCalendarScreen')}
             >
-              <Ionicons name="calendar-outline" size={16} color="#FFF" style={{ marginRight: 6 }} />
-              <Text style={styles.calendarCTAtext}>Calendário</Text>
+              <Ionicons name="calendar-outline" size={16} color={colors.white} style={{ marginRight: 6 }} />
+              <Text style={Styles.calendarCTAtext}>Calendário</Text>
             </TouchableOpacity>
           </View>
 
@@ -359,9 +361,9 @@ export default function IntensiveMoodScreen() {
             : achievements.map((item) => renderAchievement({ item }))}
 
           {selectedTab === "achievements" && (
-            <View style={styles.achievementsContainer}>
-              <Text style={styles.achievementsTitle}>Suas Conquistas</Text>
-              <Text style={styles.achievementsSubtitle}>Continue completando desafios para desbloquear mais!</Text>
+            <View style={Styles.achievementsContainer}>
+              <Text style={Styles.achievementsTitle}>Suas Conquistas</Text>
+              <Text style={Styles.achievementsSubtitle}>Continue completando desafios para desbloquear mais!</Text>
             </View>
           )}
 
@@ -372,439 +374,3 @@ export default function IntensiveMoodScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  headerContainer: {
-    paddingTop: 64, // aumentei para acomodar botões absolutos
-    paddingHorizontal: 20,
-    zIndex: 2,
-    alignItems: "center",
-  },
-  imageLogo: {
-    width: 72,
-    height: 72,
-    marginTop: 12,
-    marginBottom: 6,
-  },
-  headerTopRow: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center", // centraliza o título
-    alignItems: "center",
-  },
-  headerActions: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  headerActionsAbsolute: {
-    position: "absolute",
-    top: 46,
-    right: 20,
-    flexDirection: "row",
-    gap: 8,
-    zIndex: 10,
-  },
-  iconButton: {
-    backgroundColor: "rgba(255,255,255,0.12)",
-    padding: 8,
-    borderRadius: 10,
-  },
-  appTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#FFFFFF",
-    textAlign: "center", // garante centralização do texto
-  },
-  subtitle: {
-    fontSize: 13,
-    color: "#F3E8FF",
-    marginTop: 4,
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  statsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginTop: 6,
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statNumber: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#FFF",
-  },
-  statLabel: {
-    fontSize: 11,
-    color: "#F3E8FF",
-  },
-  progressContainer: {
-    width: "100%",
-    marginTop: 12,
-  },
-  progressBar: {
-    width: "100%",
-    height: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-    borderRadius: 6,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 6,
-  },
-  progressText: {
-    textAlign: "center",
-    color: "#FFF",
-    marginTop: 8,
-    fontWeight: "600",
-  },
-
-  contentContainer: {
-    flex: 1,
-    backgroundColor: "#FFF",
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    padding: 18,
-    paddingBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 10,
-    zIndex: 3,
-    marginTop: 14,
-  },
-
-  tabContainer: {
-    flexDirection: "row",
-    backgroundColor: "#F3F4F6",
-    borderRadius: 12,
-    padding: 4,
-    marginBottom: 14,
-  },
-  tab: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  activeTab: {
-    backgroundColor: "#FFF",
-    shadowColor: "#A259F7",
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  tabText: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-
-  quickControls: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center", // centraliza os botões de controle
-    marginBottom: 12,
-    gap: 8,
-    flexWrap: "wrap",
-    width: "100%",
-  },
-  controlButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    borderWidth: 1,
-    borderColor: "#EEF2FF",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    gap: 8,
-    marginHorizontal: 6,
-    minWidth: 120,
-    justifyContent: "center",
-  },
-  controlButtonActive: {
-    backgroundColor: "#A259F7",
-    borderColor: "#A259F7",
-  },
-  controlText: {
-    color: "#6B7280",
-    fontWeight: "600",
-    fontSize: 13,
-  },
-  controlTextActive: {
-    color: "#FFF",
-  },
-  calendarWrapper: {
-    alignItems: "center",
-    marginBottom: 14,
-  },
-  calendarCTA: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#A259F7",
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 12,
-    shadowColor: "#A259F7",
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  calendarCTAtext: {
-    color: "#FFF",
-    fontWeight: "700",
-  },
-
-  challengeCard: {
-    padding: 14,
-    backgroundColor: "#FFF",
-    borderRadius: 14,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  currentCard: {
-    borderColor: "#A259F7",
-    borderWidth: 1.5,
-    shadowColor: "#A259F7",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  completedCard: {
-    backgroundColor: "#F0FFF4",
-    borderColor: "#10B981",
-  },
-
-  challengeHeader: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  challengeIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
-    backgroundColor: "#F3F4F6",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 14,
-  },
-  completedIconContainer: {
-    backgroundColor: "#10B981",
-  },
-  challengeInfo: {
-    flex: 1,
-  },
-  challengeTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  challengeTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#111827",
-    flex: 1,
-  },
-  xpBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFBEB",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginLeft: 8,
-  },
-  xpText: {
-    fontSize: 12,
-    color: "#92400E",
-    fontWeight: "700",
-    marginLeft: 6,
-  },
-  challengeDescription: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginTop: 6,
-  },
-
-  cardMetaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-    gap: 8,
-  },
-  difficultyPill: {
-    backgroundColor: "rgba(162,89,247,0.08)",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  difficultyHard: {
-    backgroundColor: "rgba(244,63,94,0.08)",
-  },
-  difficultyText: {
-    fontSize: 12,
-    color: "#6B7280",
-    fontWeight: "600",
-  },
-  completedPill: {
-    backgroundColor: "#E6FCE6",
-    color: "#065F46",
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 10,
-    fontSize: 12,
-    fontWeight: "700",
-    overflow: "hidden",
-  },
-  currentPill: {
-    backgroundColor: "#EEF2FF",
-    color: "#3730A3",
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 10,
-    fontSize: 12,
-    fontWeight: "700",
-    overflow: "hidden",
-  },
-
-  challengeFooter: {
-    marginTop: 12,
-    alignItems: "center", // mantém centralização do botão no card
-  },
-
-  // botão principal (Começar) mantém destaque
-  startButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#A259F7",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    shadowColor: "#A259F7",
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
-    elevation: 4,
-    minWidth: 120,
-    justifyContent: "center",
-  },
-
-  // botão "Rever" menos protagonista: menor, sem sombra, borda sutil, texto menor
-  startButtonGhost: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "transparent",               // sem fundo para não competir
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "rgba(162,89,247,0.18)",        // borda roxa sutil
-    shadowColor: "transparent",
-    shadowOpacity: 0,
-    shadowRadius: 0,
-    elevation: 0,
-    minWidth: 88,
-    height: 36,
-    justifyContent: "center",
-  },
-
-  startButtonText: {
-    color: "#FFF",
-    fontWeight: "700",
-  },
-
-  startButtonTextGhost: {
-    color: "#A259F7",
-    fontWeight: "600",
-    fontSize: 13,            // menor que o botão principal
-  },
-
-  achievementCard: {
-    marginBottom: 14,
-    borderRadius: 12,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  lockedAchievement: {
-    opacity: 0.75,
-  },
-  achievementGradient: {
-    borderRadius: 12,
-  },
-  achievementContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 14,
-  },
-  achievementIcon: {
-    width: 52,
-    height: 52,
-    backgroundColor: "rgba(255,255,255,0.7)",
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 14,
-  },
-  unlockedIcon: {
-    backgroundColor: "rgba(255,255,255,0.95)",
-  },
-  achievementInfo: {
-    flex: 1,
-  },
-  achievementTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#374151",
-    marginBottom: 4,
-  },
-  achievementDescription: {
-    fontSize: 13,
-    color: "#6B7280",
-  },
-  lockedText: {
-    color: "#9CA3AF",
-  },
-  achievementBadge: {
-    marginLeft: 8,
-    backgroundColor: "rgba(255,255,255,0.9)",
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  achievementsContainer: {
-    marginTop: 10,
-    marginBottom: 20,
-    paddingHorizontal: 4,
-  },
-  achievementsTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#374151",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  achievementsSubtitle: {
-    fontSize: 14,
-    color: "#6B7280",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-});

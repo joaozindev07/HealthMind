@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import colors from "../theme/colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -110,10 +111,10 @@ export default function IntensiveCalendarScreen() {
       >
         {iconName ? (
           <View style={styles.dayContent}>
-            <Ionicons
+              <Ionicons
               name={"checkmark"}
               size={16}
-              color={item.isCompleted ? "#FFFFFF" : "#A259F7"}
+              color={item.isCompleted ? colors.white : colors.primary}
             />
             <Text style={[textStyle, { fontSize: 10, marginTop: 2 }]}>
               {item.day}
@@ -163,7 +164,7 @@ export default function IntensiveCalendarScreen() {
         </View>
         
         <View style={styles.statItem}>
-          <Ionicons name="calendar" size={24} color="#A259F7" />
+          <Ionicons name="calendar" size={24} color={colors.primary} />
           <Text style={styles.statNumber}>{intensiveData.currentDay}</Text>
           <Text style={styles.statLabel}>Dia Atual</Text>
         </View>
@@ -196,12 +197,12 @@ export default function IntensiveCalendarScreen() {
 
   return (
     <LinearGradient
-      colors={["#A259F7", "#c85efd", "#be41fd"]}
+      colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#A259F7" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
 
       {/* Header */}
       <View style={styles.headerContainer}>
@@ -216,7 +217,7 @@ export default function IntensiveCalendarScreen() {
         
         <View style={styles.headerContent}>
           <Image
-            source={require("../../assets/images/icon.png")}
+            source={require("../../assets/images/splash-icon.png")}
             style={styles.imageLogo}
           />
           <Text style={styles.appTitle}>Calendário do Intensivo</Text>

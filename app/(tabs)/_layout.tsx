@@ -1,6 +1,7 @@
 import { useAuth } from "@clerk/clerk-expo";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function AuthTabsLayout() {
   const { isSignedIn } = useAuth();
@@ -8,6 +9,7 @@ export default function AuthTabsLayout() {
   // Você pode proteger as rotas aqui, se necessário
 
   return (
+    <GestureHandlerRootView>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#A259F7",
@@ -52,5 +54,6 @@ export default function AuthTabsLayout() {
         }}
       />
     </Tabs>
+    </GestureHandlerRootView>
   );
 }

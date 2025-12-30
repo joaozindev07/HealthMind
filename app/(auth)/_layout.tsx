@@ -8,6 +8,7 @@ export default function AuthLayout() {
             <Stack.Screen name="reflections" options={{ headerShown: false }} />
             <Stack.Screen name="myData" options={{ headerShown: false }} />
             <Stack.Screen name="settings" options={{ headerShown: false }} />
+            <Stack.Screen name="resources/audioPreview" options={{ headerShown: false }} />
         </Stack>
     )
 }

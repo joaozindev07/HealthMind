@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
+import colors from "../theme/colors";
 import {
   View,
   Text,
@@ -20,17 +21,17 @@ export default function SettingsPage() {
 
   return (
     <LinearGradient
-      colors={["#A259F7", "#c85efd", "#be41fd"]}
+      colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
       style={styles.container}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#A259F7" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
 
       <View style={[styles.header, { paddingTop: 24 + height * 0.02 }]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+          <Ionicons name="arrow-back" size={24} color={colors.white} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Configurações</Text>
         <View style={{ width: 44 }} />
@@ -60,7 +61,7 @@ export default function SettingsPage() {
                   <Ionicons
                     name="person-circle-outline"
                     size={20}
-                    color="#A259F7"
+                    color={colors.primary}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -69,14 +70,14 @@ export default function SettingsPage() {
                     Nome, email e informações pessoais
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
                 <View style={styles.iconCircle}>
                   <Ionicons
                     name="shield-checkmark-outline"
                     size={20}
-                    color="#A259F7"
+                    color={colors.primary}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -85,14 +86,14 @@ export default function SettingsPage() {
                     Senha, 2FA e dispositivos confiáveis
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
                 <View style={styles.iconCircle}>
                   <Ionicons
                     name="finger-print-outline"
                     size={20}
-                    color="#A259F7"
+                    color={colors.primary}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -101,7 +102,7 @@ export default function SettingsPage() {
                     Gerencie dispositivos conectados
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
             </View>
           </View>
@@ -118,14 +119,14 @@ export default function SettingsPage() {
                   <Ionicons
                     name="notifications-outline"
                     size={20}
-                    color="#A259F7"
+                    color={colors.primary}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Notificações</Text>
                   <Text style={styles.desc}>Gerenciar no Perfil</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -133,24 +134,24 @@ export default function SettingsPage() {
                 onPress={() => router.push("/profile")}
               >
                 <View style={styles.iconCircle}>
-                  <Ionicons name="moon-outline" size={20} color="#A259F7" />
+                  <Ionicons name="moon-outline" size={20} color={colors.primary} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Aparência (Tema)</Text>
                   <Text style={styles.desc}>Gerenciar no Perfil</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
                 <View style={styles.iconCircle}>
-                  <Ionicons name="globe-outline" size={20} color="#A259F7" />
+                  <Ionicons name="globe-outline" size={20} color={colors.primary} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Idioma</Text>
                   <Text style={styles.desc}>Português (Brasil)</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
@@ -158,14 +159,14 @@ export default function SettingsPage() {
                   <Ionicons
                     name="accessibility-outline"
                     size={20}
-                    color="#A259F7"
+                    color={colors.primary}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Acessibilidade</Text>
                   <Text style={styles.desc}>Tamanho do texto e contraste</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
             </View>
           </View>
@@ -176,7 +177,7 @@ export default function SettingsPage() {
             <View style={styles.card}>
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
                 <View style={styles.iconCircle}>
-                  <Ionicons name="cloud-outline" size={20} color="#A259F7" />
+                  <Ionicons name="cloud-outline" size={20} color={colors.primary} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Uso de dados</Text>
@@ -184,24 +185,24 @@ export default function SettingsPage() {
                     Controle de sincronização e mídia
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
                 <View style={styles.iconCircle}>
-                  <Ionicons name="trash-outline" size={20} color="#A259F7" />
+                  <Ionicons name="trash-outline" size={20} color={colors.primary} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Limpar cache</Text>
                   <Text style={styles.desc}>Liberar armazenamento local</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
 
               <View style={[styles.row, { borderBottomWidth: 0 }]}>
                 <View style={styles.left}>
                   <View style={styles.iconCircle}>
-                    <Ionicons name="wifi-outline" size={20} color="#A259F7" />
+                    <Ionicons name="wifi-outline" size={20} color={colors.primary} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.title}>
@@ -213,8 +214,8 @@ export default function SettingsPage() {
                 <Switch
                   value={true}
                   onValueChange={() => {}}
-                  trackColor={{ false: "#E5E7EB", true: "#A259F7" }}
-                  thumbColor="#ffffff"
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.white}
                 />
               </View>
             </View>
@@ -226,17 +227,17 @@ export default function SettingsPage() {
             <View style={styles.card}>
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
                 <View style={styles.iconCircle}>
-                  <Ionicons name="eye-off-outline" size={20} color="#A259F7" />
+                  <Ionicons name="eye-off-outline" size={20} color={colors.primary} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Compartilhamento de dados</Text>
                   <Text style={styles.desc}>Controle de dados analíticos</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
                 <View style={styles.iconCircle}>
-                  <Ionicons name="shield-outline" size={20} color="#A259F7" />
+                  <Ionicons name="shield-outline" size={20} color={colors.primary} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Rastreamento</Text>
@@ -244,7 +245,7 @@ export default function SettingsPage() {
                     Preferências de cookies e anúncios
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
             </View>
           </View>
@@ -258,28 +259,28 @@ export default function SettingsPage() {
                   <Ionicons
                     name="document-text-outline"
                     size={20}
-                    color="#A259F7"
+                    color={colors.primary}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Termos de Uso</Text>
                   <Text style={styles.desc}>Leia os termos do serviço</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.linkRow} onPress={() => {}}>
                 <View style={styles.iconCircle}>
                   <Ionicons
                     name="newspaper-outline"
                     size={20}
-                    color="#A259F7"
+                    color={colors.primary}
                   />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.title}>Política de Privacidade</Text>
                   <Text style={styles.desc}>Como tratamos seus dados</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
               <View
                 style={[styles.linkRow, { justifyContent: "space-between" }]}
@@ -289,7 +290,7 @@ export default function SettingsPage() {
                     <Ionicons
                       name="information-circle-outline"
                       size={20}
-                      color="#A259F7"
+                      color={colors.primary}
                     />
                   </View>
                   <Text style={styles.title}>Versão do app</Text>
@@ -306,13 +307,13 @@ export default function SettingsPage() {
                 <Ionicons
                   name="person-circle-outline"
                   size={20}
-                  color="#A259F7"
+                  color={colors.primary}
                 />
                 <Text style={styles.linkText}>Dados da conta</Text>
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color="#9CA3AF"
+                  color={colors.muted}
                   style={{ marginLeft: "auto" }}
                 />
               </TouchableOpacity>
@@ -320,13 +321,13 @@ export default function SettingsPage() {
                 <Ionicons
                   name="shield-checkmark-outline"
                   size={20}
-                  color="#A259F7"
+                  color={colors.primary}
                 />
                 <Text style={styles.linkText}>Segurança</Text>
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color="#9CA3AF"
+                  color={colors.muted}
                   style={{ marginLeft: "auto" }}
                 />
               </TouchableOpacity>
@@ -352,11 +353,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: colors.white20,
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: 20, fontWeight: "700", color: "#ffffff" },
+  headerTitle: { fontSize: 20, fontWeight: "700", color: colors.white },
 
   mainContainer: {
     flex: 1,
@@ -375,12 +376,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 12,
   },
 
   card: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderRadius: 20,
     padding: 16,
     shadowColor: "#000",
@@ -395,20 +396,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
+    borderBottomColor: colors.mutedLight,
   },
   left: { flexDirection: "row", alignItems: "center", flex: 1 },
   iconCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F8F4FF",
+    backgroundColor: colors.faintPurple,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
-  title: { fontSize: 16, fontWeight: "600", color: "#1F2937" },
-  desc: { fontSize: 13, color: "#6B7280" },
+  title: { fontSize: 16, fontWeight: "600", color: colors.text },
+  desc: { fontSize: 13, color: colors.gray },
 
   linkRow: {
     flexDirection: "row",
@@ -417,7 +418,7 @@ const styles = StyleSheet.create({
   },
   linkText: {
     marginLeft: 10,
-    color: "#1F2937",
+    color: colors.text,
     fontSize: 16,
     fontWeight: "600",
   },

@@ -12,6 +12,12 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated from 'react-native-reanimated';
+import AnimatedBottomSheet from "../components/AnimatedBottomSheet";
+import { Styles } from "./styles/professionalsCss";
+import colors from "../theme/colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -67,7 +73,12 @@ function getInitials(name: string) {
 export default function ProfessionalSearchScreen() {
   const [searchText, setSearchText] = useState("");
   const [selectedFilter, setSelectedFilter] = useState(1);
-  const [showFilters, setShowFilters] = useState(false);
+  const insets = useSafeAreaInsets();
+  const HANDLE_HEIGHT = 32;
+  const BOTTOM_BAR_OFFSET = Math.max(insets.bottom, 64); // estimativa da bottom navigation
+
+  const COLLAPSED_HEIGHT = Math.round(height * 0.5); 
+  const EXPANDED_HEIGHT = Math.round(height * 0.8); 
 
   // Filtro e busca combinados
   const filteredProfessionals = useMemo(() => {
@@ -84,64 +95,64 @@ export default function ProfessionalSearchScreen() {
   }, [searchText, selectedFilter]);
 
   const renderProfessionalCard = ({ item }: { item: any }) => (
-    <View style={styles.professionalCard}>
-      <View style={styles.professionalHeader}>
-        <View style={styles.professionalAvatar}>
-          <Text style={styles.avatarText}>{getInitials(item.name)}</Text>
+    <View style={Styles.professionalCard}>
+      <View style={Styles.professionalHeader}>
+        <View style={Styles.professionalAvatar}>
+          <Text style={Styles.avatarText}>{getInitials(item.name)}</Text>
         </View>
-        <View style={styles.professionalInfo}>
+        <View style={Styles.professionalInfo}>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             <View>
-              <Text style={styles.professionalName}>{item.name}</Text>
-              <View style={styles.verifiedRow}>
-                <Ionicons name="checkmark-circle" size={14} color="#10B981" />
-                <Text style={styles.verifiedText}>Verificado • {item.specialty}</Text>
+              <Text style={Styles.professionalName}>{item.name}</Text>
+              <View style={Styles.verifiedRow}>
+                <Ionicons name="checkmark-circle" size={14} color={colors.success} />
+                <Text style={Styles.verifiedText}>Verificado • {item.specialty}</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.favoriteButton} accessibilityLabel="Favoritar profissional">
-              <Ionicons name="heart-outline" size={18} color="#A259F7" />
+            <TouchableOpacity style={Styles.favoriteButton} accessibilityLabel="Favoritar profissional">
+              <Ionicons name="heart-outline" size={18} color={colors.primary} />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.metaRow}>
-            <View style={styles.ratingBadge}>
-              <Ionicons name="star" size={12} color="#FFC107" />
-              <Text style={styles.ratingTextSmall}>{item.rating}</Text>
+          <View style={Styles.metaRow}>
+            <View style={Styles.ratingBadge}>
+              <Ionicons name="star" size={12} color={colors.warning} />
+              <Text style={Styles.ratingTextSmall}>{item.rating}</Text>
             </View>
-            <Text style={styles.experienceText}>• {item.experience}</Text>
-            <View style={styles.priceBadge}>
-              <Text style={styles.priceBadgeText}>{item.price}</Text>
+            <Text style={Styles.experienceText}>• {item.experience}</Text>
+            <View style={Styles.priceBadge}>
+              <Text style={Styles.priceBadgeText}>{item.price}</Text>
             </View>
           </View>
         </View>
       </View>
 
       {/* Card footer: perfil + agendar */}
-      <View style={styles.cardFooter}>
+      <View style={Styles.cardFooter}>
         <TouchableOpacity
-          style={styles.profileButton}
+          style={Styles.profileButton}
           accessibilityLabel="Ver perfil"
           onPress={() => {}}
         >
-          <Ionicons name="person-outline" size={16} color="#A259F7" style={{ marginRight: 8 }} />
-          <Text style={styles.profileButtonText}>Ver Perfil</Text>
+          <Ionicons name="person-outline" size={16} color={colors.primary} style={{ marginRight: 8 }} />
+          <Text style={Styles.profileButtonText}>Ver Perfil</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.scheduleButtonWrapper, !item.available && { opacity: 0.6 }]}
+          style={[Styles.scheduleButtonWrapper, !item.available && { opacity: 0.6 }]}
           activeOpacity={item.available ? 0.85 : 1}
           disabled={!item.available}
           accessibilityLabel={item.available ? "Agendar consulta" : "Indisponível"}
           onPress={() => {}}
         >
           <LinearGradient
-            colors={["#A259F7", "#c85efd", "#be41fd"]}
+            colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
-            style={styles.scheduleButton}
+            style={Styles.scheduleButton}
           >
-            <Ionicons name="calendar" size={16} color="#FFFFFF" style={{ marginRight: 8 }} />
-            <Text style={styles.scheduleButtonText}>{item.available ? "Agendar" : "Indisponível"}</Text>
+            <Ionicons name="calendar" size={16} color={colors.white} style={{ marginRight: 8 }} />
+            <Text style={Styles.scheduleButtonText}>{item.available ? "Agendar" : "Indisponível"}</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -151,8 +162,8 @@ export default function ProfessionalSearchScreen() {
   const renderFilterChip = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={[
-        styles.filterChip,
-        selectedFilter === item.id && styles.activeFilterChip,
+        Styles.filterChip,
+        selectedFilter === item.id && Styles.activeFilterChip,
       ]}
       onPress={() => setSelectedFilter(item.id)}
       activeOpacity={0.7}
@@ -161,13 +172,13 @@ export default function ProfessionalSearchScreen() {
       <Ionicons
         name={item.icon}
         size={16}
-        color={selectedFilter === item.id ? "#FFFFFF" : "#A259F7"}
-        style={styles.filterIcon}
+        color={selectedFilter === item.id ? colors.white : colors.primary}
+        style={Styles.filterIcon}
       />
       <Text
         style={[
-          styles.filterText,
-          selectedFilter === item.id && styles.activeFilterText,
+          Styles.filterText,
+          selectedFilter === item.id && Styles.activeFilterText,
         ]}
       >
         {item.name}
@@ -176,34 +187,34 @@ export default function ProfessionalSearchScreen() {
   );
 
   return (
-    <LinearGradient
-      colors={["#A259F7", "#c85efd", "#be41fd"]}
+      <LinearGradient
+      colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.container}
+      style={Styles.container}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#A259F7" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
 
       {/* header (roxo) permanece no topo DO LAYOUT) */}
-      <View style={styles.headerContainer}>
+      <View style={Styles.headerContainer}>
         <Image
           source={require("../../assets/images/icon.png")}
-          style={styles.imageLogo}
+          style={Styles.imageLogo}
         />
-        <Text style={styles.appTitle}>Encontrar Profissionais</Text>
-        <Text style={styles.subtitle}>Conecte-se com especialistas qualificados</Text>
+        <Text style={Styles.appTitle}>Encontrar Profissionais</Text>
+        <Text style={Styles.subtitle}>Conecte-se com especialistas qualificados</Text>
       </View>
 
       {/* whiteContainer: container branco arredondado que segura toda a lista */}
-      <View style={styles.whiteContainer}>
+      <AnimatedBottomSheet collapsedHeight={COLLAPSED_HEIGHT} expandedHeight={EXPANDED_HEIGHT}>
         <FlatList
           data={filteredProfessionals}
           renderItem={renderProfessionalCard}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.professionalsList}
+          contentContainerStyle={Styles.professionalsList}
           ListEmptyComponent={
-            <Text style={{ textAlign: "center", color: "#A259F7", marginTop: 32 }}>
+            <Text style={{ textAlign: "center", color: colors.primary, marginTop: 32 }}>
               Nenhum profissional encontrado.
             </Text>
           }
@@ -211,404 +222,44 @@ export default function ProfessionalSearchScreen() {
           ListHeaderComponent={
             <>
               {/* Search Bar */}
-              <View style={styles.searchContainer}>
-                <View style={styles.searchWrapper}>
-                  <Ionicons name="search-outline" size={20} color="#9CA3AF" style={styles.searchIcon} />
+              <View style={Styles.searchContainer}>
+                <View style={Styles.searchWrapper}>
+                  <Ionicons name="search-outline" size={20} color={colors.muted} style={Styles.searchIcon} />
                   <TextInput
-                    style={styles.searchInput}
+                    style={Styles.searchInput}
                     placeholder="Buscar..."
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={colors.muted}
                     value={searchText}
                     onChangeText={setSearchText}
                     autoCapitalize="none"
                     autoCorrect={false}
                     accessibilityLabel="Buscar profissional"
                     returnKeyType="search"
-                  />
-                  <TouchableOpacity style={styles.filterToggle} onPress={() => setShowFilters(!showFilters)}>
-                    <Ionicons name="options-outline" size={20} color="#A259F7" />
-                  </TouchableOpacity>
+                  />        
                 </View>
               </View>
 
               {/* Filter Chips */}
-              {showFilters && (
-                <View style={styles.filtersContainer}>
-                  <FlatList
-                    data={professionalTypes}
-                    renderItem={renderFilterChip}
-                    keyExtractor={(item) => item.id.toString()}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.filtersList}
-                  />
-                </View>
-              )}
+              <View style={Styles.filtersContainer}>
+                <FlatList
+                  data={professionalTypes}
+                  renderItem={renderFilterChip}
+                  keyExtractor={(item) => item.id.toString()}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={Styles.filtersList}
+                />
+              </View>
 
               {/* Results Header */}
-              <View style={styles.resultsHeader}>
-                <Text style={styles.resultsTitle}>Profissionais Disponíveis</Text>
+              <View style={Styles.resultsHeader}>
+                <Text style={Styles.resultsTitle}>Profissionais Disponíveis</Text>
               </View>
             </>
           }
-          ListFooterComponent={<View style={styles.androidBottomSpacing} />}
+          ListFooterComponent={<View style={{ height: BOTTOM_BAR_OFFSET + 24 }} />}
         />
-      </View>
+      </AnimatedBottomSheet>
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-
-  /* topo roxo */
-  headerContainer: {
-    // mantive paddings parecidos com o seu original
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 32,
-  },
-  imageLogo: {
-    width: 100,
-    height: 100,
-  },
-  appTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.8)",
-    textAlign: "center",
-    marginBottom: 8,
-  },
-
-  /* container branco que segura a lista inteira */
-  whiteContainer: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    // esse marginTop negativo faz a borda arredondada "sobrepor" o gradiente
-    marginTop: -10,
-    overflow: "hidden",
-    paddingTop: 16,
-  },
-
-  /* Conteúdo interno dentro do branco */
-  contentContainer: {
-    /* não usado diretamente, mantive caso queira reaplicar */
-  },
-
-  /* FlatList content */
-  professionalsList: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 28,
-  },
-
-  /* Search & filters */
-  searchContainer: {
-    marginBottom: 20,
-  },
-  searchWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F9FAFB",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    paddingHorizontal: 16,
-    height: 56,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  searchIcon: {
-    marginRight: 12,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#374151",
-    paddingVertical: 0,
-  },
-  filterToggle: {
-    padding: 8,
-  },
-  filtersContainer: {
-    marginBottom: 16,
-  },
-  filtersList: {
-    paddingHorizontal: 4,
-  },
-  filterChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 12,
-    borderWidth: 1,
-    borderColor: "#A259F7",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  activeFilterChip: {
-    backgroundColor: "#A259F7",
-    borderColor: "#A259F7",
-  },
-  filterIcon: {
-    marginRight: 6,
-  },
-  filterText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#A259F7",
-  },
-  activeFilterText: {
-    color: "#FFFFFF",
-  },
-
-  /* results header */
-  resultsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  resultsTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#374151",
-  },
-
-  /* cards */
-  professionalCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: "#F3F4F6",
-  },
-  professionalHeader: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 16,
-  },
-  professionalAvatar: {
-    width: 56,
-    height: 56,
-    backgroundColor: "#A259F7",
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-  avatarText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-  professionalInfo: {
-    flex: 1,
-  },
-  professionalName: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: 4,
-  },
-  professionalSpecialty: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginBottom: 8,
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  ratingText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#374151",
-    marginLeft: 4,
-  },
-  experienceText: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginLeft: 4,
-  },
-  professionalActions: {
-    alignItems: "flex-end",
-  },
-  priceText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#A259F7",
-    marginBottom: 8,
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  availableBadge: {
-    backgroundColor: "#D1FAE5",
-  },
-  unavailableBadge: {
-    backgroundColor: "#FEE2E2",
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  availableText: {
-    color: "#065F46",
-  },
-  unavailableText: {
-    color: "#991B1B",
-  },
-  contactButtonWrapper: {
-    borderRadius: 12,
-    shadowColor: "#A259F7",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  contactButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 12,
-    height: 44,
-    paddingHorizontal: 16,
-  },
-  contactButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-
-  androidBottomSpacing: {
-    height: 24,
-  },
-
-  /* Novos estilos para o cartão profissional */
-  verifiedRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 4,
-  },
-  verifiedText: {
-    fontSize: 12,
-    color: "#374151",
-    marginLeft: 4,
-  },
-  favoriteButton: {
-    padding: 8,
-  },
-  metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 8,
-  },
-  ratingBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F3F4F6",
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginRight: 8,
-  },
-  ratingTextSmall: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#374151",
-    marginLeft: 4,
-  },
-  priceBadge: {
-    backgroundColor: "#A259F7",
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginLeft: "auto",
-  },
-  priceBadgeText: {
-    color: "#FFFFFF",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  cardFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 16,
-  },
-  profileButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F3F4F6",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginRight: 8,
-    flex: 1,
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  profileButtonText: {
-    color: "#374151",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  scheduleButtonWrapper: {
-    borderRadius: 12,
-    shadowColor: "#A259F7",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-    flex: 1,
-  },
-  scheduleButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 12,
-    height: 44,
-    paddingHorizontal: 16,
-  },
-  scheduleButtonText: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-});

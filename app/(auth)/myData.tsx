@@ -2,6 +2,7 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
+import colors from '../theme/colors';
 import {
   View,
   Text,
@@ -18,8 +19,8 @@ export default function MyDataPage() {
   const router = useRouter();
 
   return (
-    <LinearGradient colors={["#A259F7", "#c85efd", "#be41fd"]} style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#A259F7" />
+    <LinearGradient colors={[colors.primary, colors.primaryLight, colors.primaryDark]} style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
 
       <View style={[styles.header, { paddingTop: 24 + height * 0.02 }]}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -30,8 +31,8 @@ export default function MyDataPage() {
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <LinearGradient
-          colors={["rgba(255,255,255,0.95)", "rgba(255,255,255,0.9)", "rgba(255,255,255,0.95)"]}
+          <LinearGradient
+          colors={[colors.white95, colors.white9, colors.white95]}
           style={styles.mainContainer}
         >
           <View style={styles.section}>
@@ -93,7 +94,7 @@ export default function MyDataPage() {
                 { icon: "ribbon", label: "Meta Alcançada" },
               ].map((a, idx) => (
                 <View key={idx} style={styles.badge}>
-                  <Ionicons name={a.icon as any} size={18} color="#A259F7" />
+                  <Ionicons name={a.icon as any} size={18} color={colors.primary} />
                   <Text style={styles.badgeText}>{a.label}</Text>
                 </View>
               ))}
@@ -105,7 +106,7 @@ export default function MyDataPage() {
             <View style={styles.cardProfessional}>
               <View style={styles.professionalHeader}>
                 <View style={styles.professionalAvatarCircle}>
-                  <Ionicons name="person" size={24} color="#A259F7" />
+                  <Ionicons name="person" size={24} color={colors.primary} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.professionalName}>Dra. Ana Silva</Text>
@@ -115,15 +116,15 @@ export default function MyDataPage() {
 
               <View style={styles.professionalInfoRow}>
                 <View style={styles.infoChip}>
-                  <Ionicons name="time-outline" size={16} color="#7C3AED" />
+                  <Ionicons name="time-outline" size={16} color={colors.primaryDark} />
                   <Text style={styles.infoChipText}>12 sessões</Text>
                 </View>
                 <View style={styles.infoChip}>
-                  <Ionicons name="star" size={16} color="#7C3AED" />
+                  <Ionicons name="star" size={16} color={colors.primaryDark} />
                   <Text style={styles.infoChipText}>4.8 avaliação</Text>
                 </View>
                 <View style={styles.infoChip}>
-                  <Ionicons name="calendar" size={16} color="#7C3AED" />
+                  <Ionicons name="calendar" size={16} color={colors.primaryDark} />
                   <Text style={styles.infoChipText}>Próxima: 20/12</Text>
                 </View>
               </View>
@@ -133,8 +134,12 @@ export default function MyDataPage() {
                 Exemplo: abordagem terapêutica, experiência e foco em saúde mental preventiva.
               </Text>
 
-              <TouchableOpacity style={styles.professionalButton}>
-                <Ionicons name="information-circle-outline" size={18} color="#7C3AED" />
+              <TouchableOpacity style={styles.professionalButton} onPress={() => {
+                router.push({
+                  pathname: "/(auth)/test",
+                })
+              }}>
+                <Ionicons name="information-circle-outline" size={18} color={colors.primaryDark} />
                 <Text style={styles.professionalButtonText}>Ver perfil</Text>
               </TouchableOpacity>
             </View>
@@ -144,7 +149,7 @@ export default function MyDataPage() {
             <Text style={styles.sectionTitle}>XP Adquirido dos Intensivos</Text>
             <View style={styles.card}>
               <View style={styles.xpRow}>
-                <Ionicons name="flash" size={18} color="#A259F7" />
+                <Ionicons name="flash" size={18} color={colors.primary} />
                 <Text style={styles.xpLabel}>XP total</Text>
                 <Text style={styles.xpValue}>1.240</Text>
               </View>
@@ -178,14 +183,14 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: colors.white20,
     alignItems: "center",
     justifyContent: "center",
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#ffffff" 
+    color: colors.white 
     },
   mainContainer: {
     flex: 1,
@@ -220,17 +225,17 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#F8F4FF",
+    backgroundColor: colors.faintPurple,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
   },
-  statTitle: { fontSize: 14, fontWeight: "600", color: "#1F2937" },
-  statValue: { fontSize: 20, fontWeight: "700", color: "#1F2937", marginTop: 4 },
-  statHint: { fontSize: 12, color: "#6B7280", marginTop: 2 },
+  statTitle: { fontSize: 14, fontWeight: "600", color: colors.text },
+  statValue: { fontSize: 20, fontWeight: "700", color: colors.text, marginTop: 4 },
+  statHint: { fontSize: 12, color: colors.gray, marginTop: 2 },
 
   card: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 16,
     shadowColor: "#000",
@@ -243,28 +248,28 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F8F4FF",
+    backgroundColor: colors.faintPurple,
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginRight: 8,
     marginBottom: 8,
   },
-  badgeText: { color: "#6B7280", marginLeft: 8, fontWeight: "600" },
+  badgeText: { color: colors.gray, marginLeft: 8, fontWeight: "600" },
 
   goalItem: { marginBottom: 14 },
-  goalTitle: { fontSize: 14, color: "#1F2937", fontWeight: "600", marginBottom: 6 },
+  goalTitle: { fontSize: 14, color: colors.text, fontWeight: "600", marginBottom: 6 },
   progressBarBg: {
     height: 10,
     borderRadius: 6,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: colors.mutedLight,
     overflow: "hidden",
   },
-  progressBarFill: { height: 10, borderRadius: 6, backgroundColor: "#A259F7" },
+  progressBarFill: { height: 10, borderRadius: 6, backgroundColor: colors.primary },
   goalPercent: { fontSize: 12, color: "#6B7280", marginTop: 6 },
 
   cardProfessional: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 16,
     shadowColor: "#000",
@@ -278,13 +283,13 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "#F5F3FF",
+    backgroundColor: colors.faintPurple,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
-  professionalName: { fontSize: 16, fontWeight: "700", color: "#1F2937" },
-  professionalRole: { fontSize: 13, color: "#6B7280" },
+  professionalName: { fontSize: 16, fontWeight: "700", color: colors.text },
+  professionalRole: { fontSize: 13, color: colors.gray },
   professionalInfoRow: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", marginBottom: 12 },
   infoChip: {
     flexDirection: "row",
@@ -301,17 +306,17 @@ const styles = StyleSheet.create({
   professionalButton: {
     marginTop: 12,
     alignSelf: "flex-start",
-    backgroundColor: "#F5F3FF",
+    backgroundColor: colors.faintPurple,
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
   },
-  professionalButtonText: { marginLeft: 8, color: "#7C3AED", fontWeight: "700" },
+  professionalButtonText: { marginLeft: 8, color: colors.primaryDark, fontWeight: "700" },
 
   xpRow: { flexDirection: "row", alignItems: "center" },
-  xpLabel: { marginLeft: 8, color: "#6B7280" },
-  xpValue: { marginLeft: "auto", fontWeight: "700", color: "#1F2937" },
-  xpHint: { fontSize: 12, color: "#6B7280", marginTop: 8 },
+  xpLabel: { marginLeft: 8, color: colors.gray },
+  xpValue: { marginLeft: "auto", fontWeight: "700", color: colors.text },
+  xpHint: { fontSize: 12, color: colors.gray, marginTop: 8 },
 });

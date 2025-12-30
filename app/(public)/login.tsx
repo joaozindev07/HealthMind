@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import colors from '../theme/colors';
 import { Link, useRouter } from "expo-router";
 import { useOAuth, useSignIn, useUser } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
@@ -104,12 +105,12 @@ export default function LoginScreen() {
 
   return (
     <LinearGradient
-      colors={["#A259F7", "#c85efd", "#be41fd"]}
+      colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#A259F7" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
       {/* Header Section */}
       <View style={styles.headerContainer}>
         <View style={styles.logoContainer}>
@@ -122,18 +123,18 @@ export default function LoginScreen() {
         <Text style={styles.subtitle}>Entre na sua conta</Text>
       </View>
       <LinearGradient
-        colors={["rgba(255, 255, 255, 0.98)", "rgba(255, 255, 255, 0.92)"]}
+        colors={[colors.white98, colors.white92]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.formContainer}
       >
-        {erro ? (
-          <Text
-            style={{ color: "#ff3333", textAlign: "center", marginBottom: 12 }}
-          >
-            {erro}
-          </Text>
-        ) : null}
+          {erro ? (
+            <Text
+              style={{ color: colors.danger, textAlign: "center", marginBottom: 12 }}
+            >
+              {erro}
+            </Text>
+          ) : null}
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Email Input */}
           <View style={styles.inputContainer}>
@@ -141,13 +142,13 @@ export default function LoginScreen() {
               <Ionicons
                 name="mail-outline"
                 size={20}
-                color="#9CA3AF"
+                color={colors.muted}
                 style={styles.inputIcon}
               />
               <TextInput
                 style={styles.textInput}
                 placeholder="Email"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.muted}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -163,7 +164,7 @@ export default function LoginScreen() {
               <Ionicons
                 name="lock-closed-outline"
                 size={20}
-                color="#9CA3AF"
+                color={colors.muted}
                 style={styles.inputIcon}
               />
               <TextInput
@@ -180,11 +181,11 @@ export default function LoginScreen() {
                 style={styles.eyeButton}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Ionicons
-                  name={showPassword ? "eye-off-outline" : "eye-outline"}
-                  size={20}
-                  color="#9CA3AF"
-                />
+                  <Ionicons
+                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                    size={20}
+                    color={colors.muted}
+                  />
               </TouchableOpacity>
             </View>
           </View>
@@ -205,14 +206,14 @@ export default function LoginScreen() {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={["#A259F7", "#c85efd", "#be41fd"]}
+              colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.loginButton}
             >
               {isLoading ? (
                 <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color={colors.white} />
                   <Text style={styles.loginButtonText}>Entrando...</Text>
                 </View>
               ) : (
@@ -276,13 +277,13 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.white,
     letterSpacing: 2,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "rgba(255, 255, 255, 0.8)",
+    color: colors.white8,
   },
   formContainer: {
     flex: 0.6,
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
     paddingHorizontal: 32,
     paddingTop: 40,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -302,13 +303,13 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.surface,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     paddingHorizontal: 16,
     height: 56,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 16,
-    color: "#374151",
+    color: colors.textSecondary,
     paddingVertical: 0,
   },
   eyeButton: {
@@ -333,14 +334,14 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   forgotPasswordText: {
-    color: "#A259F7",
+    color: colors.primary,
     fontSize: 14,
     fontWeight: "600",
   },
   loginButtonWrapper: {
     borderRadius: 16,
     marginBottom: 32,
-    shadowColor: "#A259F7",
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   loginButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 18,
     fontWeight: "600",
   },
@@ -372,11 +373,11 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#E5E7EB",
+    backgroundColor: colors.border,
   },
   dividerText: {
     marginHorizontal: 16,
-    color: "#6B7280",
+    color: colors.gray,
     fontSize: 14,
   },
   socialButtonsContainer: {
@@ -389,11 +390,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderRadius: 16,
     height: 48,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -404,12 +405,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginRight: 8,
-    color: "#374151",
+    color: colors.textSecondary,
   },
   socialButtonLabel: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#374151",
+    color: colors.textSecondary,
   },
   signUpContainer: {
     flexDirection: "row",
@@ -419,11 +420,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   signUpText: {
-    color: "#6B7280",
+    color: colors.gray,
     fontSize: 16,
   },
   signUpLink: {
-    color: "#A259F7",
+    color: colors.primary,
     fontSize: 16,
     fontWeight: "600",
   },

@@ -20,21 +20,22 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUserData, saveUserData } from "../utils/storage";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import colors from '../theme/colors';
 
 const { width, height } = Dimensions.get("window");
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? StatusBar.currentHeight ?? 20 : 0;
 
-const PRIMARY = "#A259F7";
-const ACCENT = "#6B46C1";
-const MUTED = "#6B7280";
+const PRIMARY = colors.primary;
+const ACCENT = colors.primaryDark;
+const MUTED = colors.gray;
 
 const moods = [
-  { emoji: "😊", label: "Feliz", color: "#10B981" },
-  { emoji: "😌", label: "Calmo", color: "#3B82F6" },
-  { emoji: "😔", label: "Triste", color: "#6B7280" },
-  { emoji: "😰", label: "Ansioso", color: "#F59E0B" },
-  { emoji: "😡", label: "Irritado", color: "#EF4444" },
+  { emoji: "😊", label: "Feliz", color: colors.success },
+  { emoji: "😌", label: "Calmo", color: colors.info },
+  { emoji: "😔", label: "Triste", color: colors.gray },
+  { emoji: "😰", label: "Ansioso", color: colors.warning },
+  { emoji: "😡", label: "Irritado", color: colors.danger },
 ];
 
 export default function ReflectionsPage() {
@@ -212,8 +213,8 @@ export default function ReflectionsPage() {
               style={styles.smallAction}
               onPress={() => deleteReflection(item.id)}
             >
-              <Ionicons name="trash-outline" size={16} color="#EF4444" />
-              <Text style={[styles.smallActionText, { color: "#EF4444" }]}>
+              <Ionicons name="trash-outline" size={16} color={colors.danger} />
+              <Text style={[styles.smallActionText, { color: colors.danger }]}>
                 Excluir
               </Text>
             </TouchableOpacity>
@@ -232,7 +233,7 @@ export default function ReflectionsPage() {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
         <View
           style={[styles.headerWrap, { paddingTop: STATUSBAR_HEIGHT - 20 }]}
         >
@@ -244,7 +245,7 @@ export default function ReflectionsPage() {
               onPress={() => router.back()}
               style={styles.headerBack}
             >
-              <Ionicons name="arrow-back" size={22} color="#fff" />
+              <Ionicons name="arrow-back" size={22} color={colors.white} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Minhas Reflexões</Text>
             <View style={{ width: 44 }} />
@@ -260,7 +261,7 @@ export default function ReflectionsPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+    <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
       <View style={[styles.headerWrap, { paddingTop: STATUSBAR_HEIGHT - 20 }]}>
         <LinearGradient
           colors={[PRIMARY, ACCENT]}
@@ -270,11 +271,11 @@ export default function ReflectionsPage() {
             onPress={() => router.back()}
             style={styles.headerBack}
           >
-            <Ionicons name="arrow-back" size={22} color="#fff" />
+              <Ionicons name="arrow-back" size={22} color={colors.white} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Minhas Reflexões</Text>
-          <TouchableOpacity onPress={openNewModal} style={styles.headerAdd}>
-            <Ionicons name="add" size={20} color="#fff" />
+            <TouchableOpacity onPress={openNewModal} style={styles.headerAdd}>
+            <Ionicons name="add" size={20} color={colors.white} />
           </TouchableOpacity>
         </LinearGradient>
       </View>
@@ -294,7 +295,7 @@ export default function ReflectionsPage() {
               <Ionicons
                 name="create-outline"
                 size={18}
-                color="#fff"
+                color={colors.white}
                 style={{ marginRight: 8 }}
               />
               <Text style={styles.primaryCtaText}>Adicionar Reflexão</Text>
@@ -336,7 +337,7 @@ export default function ReflectionsPage() {
                       selected && {
                         borderColor: m.color,
                         borderWidth: 2,
-                        backgroundColor: "#fff",
+                          backgroundColor: colors.white,
                       },
                     ]}
                   >
@@ -374,7 +375,7 @@ export default function ReflectionsPage() {
                   colors={[PRIMARY, ACCENT]}
                   style={styles.modalSaveGradient}
                 >
-                  <Text style={{ color: "#fff", fontWeight: "700" }}>
+                  <Text style={{ color: colors.white, fontWeight: "700" }}>
                     {editingId ? "Salvar" : "Adicionar"}
                   </Text>
                 </LinearGradient>
@@ -390,11 +391,11 @@ export default function ReflectionsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
   },
 
   headerWrap: {
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 6,
@@ -421,7 +422,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerTitle: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 18,
     fontWeight: "700",
   },
@@ -431,14 +432,14 @@ const styles = StyleSheet.create({
     paddingBottom: 36,
   },
 
-  card: {
-    backgroundColor: "#fff",
+    card: {
+    backgroundColor: colors.white,
     borderRadius: 14,
     padding: 16,
     marginBottom: 14,
     borderWidth: 1,
-    borderColor: "#F1F5F9",
-    shadowColor: "#000",
+    borderColor: colors.mutedLight,
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.06,
     shadowRadius: 10,
@@ -453,12 +454,12 @@ const styles = StyleSheet.create({
   moodBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.surface,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#F1F5F9",
+    borderColor: colors.mutedLight,
   },
   moodEmoji: {
     fontSize: 18,
@@ -473,8 +474,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 
- cardNote: {
-   color: "#1F2937",
+  cardNote: {
+   color: colors.text,
    marginBottom: 12,
    lineHeight: 20,
  },
@@ -506,7 +507,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 8,
   },
   emptySubtitle: {
@@ -527,25 +528,25 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   primaryCtaText: {
-    color: "#fff",
+    color: colors.white,
     fontWeight: "700",
   },
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: colors.overlay,
     justifyContent: "center",
     padding: 20,
   },
   modalCard: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 14,
     padding: 16,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 8,
   },
   label: {
@@ -553,24 +554,24 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
 
-  moodPicker: {
+    moodPicker: {
     alignItems: "center",
     justifyContent: "center",
     padding: 10,
     marginRight: 10,
     borderRadius: 10,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#F1F5F9",
+    borderColor: colors.mutedLight,
     minWidth: 72,
   },
 
   textarea: {
     minHeight: 100,
     borderRadius: 10,
-    backgroundColor: "#F1F5F9",
+    backgroundColor: colors.mutedLight,
     padding: 12,
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 12,
   },
 

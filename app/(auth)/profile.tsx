@@ -24,6 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { getUserData, saveUserData } from "../utils/storage";
 import * as Notifications from "expo-notifications";
+import colors from "../theme/colors";
 
 const { width, height } = Dimensions.get("window");
 const STATUSBAR_HEIGHT =
@@ -209,10 +210,10 @@ export default function ProfilePage() {
 
   return (
     <LinearGradient
-      colors={["#A259F7", "#c85efd", "#be41fd"]}
+      colors={[colors.primary, colors.primaryLight, colors.primaryDark]}
       style={styles.container}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#A259F7" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
 
       <View
         style={[
@@ -224,11 +225,11 @@ export default function ProfilePage() {
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+          <Ionicons name="arrow-back" size={24} color={colors.white} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Meu Perfil</Text>
         <TouchableOpacity style={styles.settingsButton} onPress={() => router.push("/settings")}>
-          <Ionicons name="settings-outline" size={24} color="#ffffff" />
+          <Ionicons name="settings-outline" size={24} color={colors.white} />
         </TouchableOpacity>
       </View>
 
@@ -237,11 +238,7 @@ export default function ProfilePage() {
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient
-          colors={[
-            "rgba(255,255,255,0.95)",
-            "rgba(255,255,255,0.9)",
-            "rgba(255,255,255,0.95)",
-          ]}
+          colors={[colors.white95, colors.white92, colors.white95]}
           style={styles.mainContainer}
         >
           {/* Profile Info */}
@@ -249,7 +246,7 @@ export default function ProfilePage() {
             <View style={styles.profileHeader}>
               <View style={styles.avatarContainer}>
                 <LinearGradient
-                  colors={["#A259F7", "#c85efd"]}
+                  colors={[colors.primary, colors.primaryLight]}
                   style={styles.avatar}
                 >
                   {profileImage ? (
@@ -265,13 +262,13 @@ export default function ProfilePage() {
                   style={styles.editAvatarButton}
                   onPress={pickImage}
                 >
-                  <Ionicons name="camera" size={16} color="#A259F7" />
+                  <Ionicons name="camera" size={16} color={colors.primary} />
                 </TouchableOpacity>
               </View>
               <View style={styles.profileInfo}>
                 <Text style={styles.profileName}>{nickname || "Usuário"}</Text>
                 <View style={styles.membershipBadge}>
-                  <Ionicons name="star" size={14} color="#FFD700" />
+                  <Ionicons name="star" size={14} color={colors.warning} />
                   <Text style={styles.profileJoined}>Membro Premium</Text>
                 </View>
               </View>
@@ -281,7 +278,7 @@ export default function ProfilePage() {
           {/* Personal Information */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
-              <Ionicons name="person-outline" size={20} color="#A259F7" />{" "}
+                <Ionicons name="person-outline" size={20} color={colors.primary} />{" "}
               Informações Pessoais
             </Text>
 
@@ -291,7 +288,7 @@ export default function ProfilePage() {
                 <Ionicons
                   name="person"
                   size={20}
-                  color="#A259F7"
+                  color={colors.primary}
                   style={styles.inputIcon}
                 />
                 <TextInput
@@ -309,7 +306,7 @@ export default function ProfilePage() {
                 <Ionicons
                   name="pricetag"
                   size={20}
-                  color="#A259F7"
+                  color={colors.primary}
                   style={styles.inputIcon}
                 />
                 <TextInput
@@ -325,7 +322,7 @@ export default function ProfilePage() {
           {/* Preferences */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
-              <Ionicons name="settings-outline" size={20} color="#A259F7" />{" "}
+              <Ionicons name="settings-outline" size={20} color={colors.primary} />{" "}
               Preferências
             </Text>
 
@@ -333,7 +330,7 @@ export default function ProfilePage() {
               <View style={styles.preferenceItem}>
                 <View style={styles.preferenceLeft}>
                   <View style={styles.preferenceIconContainer}>
-                    <Ionicons name="notifications" size={20} color="#A259F7" />
+                    <Ionicons name="notifications" size={20} color={colors.primary} />
                   </View>
                   <View style={styles.preferenceInfo}>
                     <Text style={styles.preferenceTitle}>Notificações</Text>
@@ -345,15 +342,15 @@ export default function ProfilePage() {
                 <Switch
                   value={notificationsEnabled}
                   onValueChange={setNotificationsEnabled}
-                  trackColor={{ false: "#E5E7EB", true: "#A259F7" }}
-                  thumbColor="#ffffff"
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.white}
                 />
               </View>
 
               <View style={styles.preferenceItem}>
                 <View style={styles.preferenceLeft}>
                   <View style={styles.preferenceIconContainer}>
-                    <Ionicons name="moon" size={20} color="#A259F7" />
+                    <Ionicons name="moon" size={20} color={colors.primary} />
                   </View>
                   <View style={styles.preferenceInfo}>
                     <Text style={styles.preferenceTitle}>Modo escuro</Text>
@@ -365,8 +362,8 @@ export default function ProfilePage() {
                 <Switch
                   value={darkModeEnabled}
                   onValueChange={setDarkModeEnabled}
-                  trackColor={{ false: "#E5E7EB", true: "#A259F7" }}
-                  thumbColor="#ffffff"
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.white}
                 />
               </View>
             </View>
@@ -378,7 +375,7 @@ export default function ProfilePage() {
               <Ionicons
                 name="shield-checkmark-outline"
                 size={20}
-                color="#A259F7"
+                color={colors.primary}
               />{" "}
               Conta
             </Text>
@@ -387,7 +384,7 @@ export default function ProfilePage() {
               
               <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/myData")}>
                 <View style={styles.menuIconContainer}>
-                  <Ionicons name="bar-chart" size={20} color="#A259F7" />
+                  <Ionicons name="bar-chart" size={20} color={colors.primary} />
                 </View>
                 <View style={styles.menuInfo}>
                   <Text style={styles.menuTitle}>Meus Dados</Text>
@@ -395,12 +392,12 @@ export default function ProfilePage() {
                     Visualize seu histórico e estatísticas
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.menuItem}>
                 <View style={styles.menuIconContainer}>
-                  <Ionicons name="help-circle" size={20} color="#A259F7" />
+                  <Ionicons name="help-circle" size={20} color={colors.primary} />
                 </View>
                 <View style={styles.menuInfo}>
                   <Text style={styles.menuTitle}>Ajuda e Suporte</Text>
@@ -408,7 +405,7 @@ export default function ProfilePage() {
                     Central de ajuda e contato
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={20} color={colors.muted} />
               </TouchableOpacity>
             </View>
           </View>
@@ -420,7 +417,7 @@ export default function ProfilePage() {
               onPress={handleSave}
             >
               <LinearGradient
-                colors={["#A259F7", "#c856f7"]}
+                colors={[colors.primary, colors.primaryLight]}
                 style={styles.saveButtonGradient}
               >
                 <Text style={styles.saveButtonText}>salvar</Text>
@@ -438,7 +435,7 @@ export default function ProfilePage() {
                 }
               }}
             >
-              <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+              <Ionicons name="log-out-outline" size={20} color={colors.danger} />
               <Text style={styles.logoutButtonText}>Sair da Conta</Text>
             </TouchableOpacity>
           </View>
@@ -457,13 +454,13 @@ export default function ProfilePage() {
           ]}
         >
           <LinearGradient
-            colors={["#34D399", "#10B981"]}
+            colors={[colors.success, colors.success]}
             style={styles.successToastGradient}
           >
             <Ionicons
               name="checkmark-circle"
               size={24}
-              color="#ffffff"
+              color={colors.white}
               style={styles.successToastIcon}
             />
             <View style={{ flex: 1 }}>
@@ -501,20 +498,20 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: colors.white20,
     alignItems: "center",
     justifyContent: "center",
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#ffffff",
+    color: colors.white,
   },
   settingsButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: colors.white20,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -540,7 +537,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 16,
     flexDirection: "row",
     alignItems: "center",
@@ -561,17 +558,17 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#A259F7",
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-    borderColor: "#A259F7"
+    borderColor: colors.primary
   },
   avatarText: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#ffffff",
+    color: colors.white,
   },
   editAvatarButton: {
     position: "absolute",
@@ -580,11 +577,11 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
-    borderColor: "#A259F7",
+    borderColor: colors.primary,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -597,18 +594,18 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 4,
   },
   profileEmail: {
     fontSize: 16,
-    color: "#6B7280",
+    color: colors.gray,
     marginBottom: 8,
   },
   membershipBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF7ED",
+    backgroundColor: colors.accent,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 20,
@@ -616,7 +613,7 @@ const styles = StyleSheet.create({
   },
   profileJoined: {
     fontSize: 12,
-    color: "#F59E0B",
+    color: colors.warning,
     fontWeight: "600",
     marginLeft: 4,
   },
@@ -627,17 +624,17 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 8,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     paddingHorizontal: 16,
     borderWidth: 2,
-    borderColor: "#F1F5F9",
+    borderColor: colors.mutedLight,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -651,11 +648,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 16,
     fontSize: 16,
-    color: "#1F2937",
+    color: colors.text,
   },
 
   preferenceCard: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderRadius: 20,
     padding: 20,
     shadowColor: "#000",
@@ -670,7 +667,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
+    borderBottomColor: colors.mutedLight,
   },
   preferenceLeft: {
     flexDirection: "row",
@@ -681,7 +678,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F8F4FF",
+    backgroundColor: colors.faintPurple,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 16,
@@ -692,16 +689,16 @@ const styles = StyleSheet.create({
   preferenceTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 4,
   },
   preferenceDescription: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.gray,
   },
 
   menuCard: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderRadius: 20,
     padding: 8,
     shadowColor: "#000",
@@ -722,7 +719,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F8F4FF",
+    backgroundColor: colors.faintPurple,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 16,
@@ -733,18 +730,18 @@ const styles = StyleSheet.create({
   menuTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1F2937",
+    color: colors.text,
     marginBottom: 4,
   },
   menuDescription: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.gray,
   },
 
   saveButton: {
     borderRadius: 16,
     marginBottom: 16,
-    shadowColor: "#A259F7",
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -758,20 +755,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   saveButtonText: {
-    color: "#ffffff",
+    color: colors.white,
     fontSize: 18,
     fontWeight: "700",
     marginLeft: 7,
   },
   logoutButton: {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderRadius: 16,
     paddingVertical: 18,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: "#FEE2E2",
+    borderColor: colors.dangerLight,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -779,7 +776,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   logoutButtonText: {
-    color: "#EF4444",
+    color: colors.danger,
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
@@ -806,12 +803,12 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   successToastTitle: {
-    color: "#ffffff",
+    color: colors.white,
     fontSize: 16,
     fontWeight: "700",
   },
   successToastDescription: {
-    color: "#ECFDF5",
+    color: colors.white98,
     fontSize: 13,
     marginTop: 2,
   },
