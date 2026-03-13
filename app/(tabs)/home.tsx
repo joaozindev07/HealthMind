@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
 import { getUserData, saveUserData } from "../utils/storage";
 import { useUser } from "@clerk/clerk-expo";
+import {  } from "./professional";
 import {
   View,
   Text,
@@ -443,19 +444,6 @@ export default function HomePage() {
                     router.push({
                       pathname: "../(auth)/resources/audioPreview",
                     })}
-                  //  else if (resource.type === "Artigo") {
-                  //   router.push({
-                  //     pathname: "../(auth)/resources/articlePreview",
-                  //   })
-                  // } else if (resource.type === "Podcast") {
-                  //   router.push({
-                  //     pathname: "../(auth)/resources/podcastPreview",
-                  //   })
-                  // } else if (resource.type === "Vídeo") {
-                  //   router.push({
-                  //     pathname: "../(auth)/resources/videoPreview",
-                  //   })
-                  // }
                 }}
               >
                 <View style={Styles.resourceHeader}>

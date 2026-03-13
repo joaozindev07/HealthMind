@@ -18,7 +18,8 @@ export default function AuthTabsLayout() {
           backgroundColor: "#fff",
           borderTopLeftRadius: 16,
           borderTopRightRadius: 16,
-          height: 60,
+          height: 120,
+          marginTop: -50,
         },
         tabBarLabelStyle: {
           fontSize: 14,

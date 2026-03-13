@@ -77,7 +77,7 @@ export default function AnimatedBottomSheet({
     const t = (containerHeight.value - collapsedHeight) / (expandedHeight - collapsedHeight);
     const clamped = Math.max(0, Math.min(1, t));
     return {
-      opacity: 1 - clamped,
+      opacity: clamped,
     };
   });
 
